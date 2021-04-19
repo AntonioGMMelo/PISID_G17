@@ -9,13 +9,13 @@ import java.sql.Statement;
 
 public class MySQLStart {
 
-	public void connect() {
+	public static void connect() {
 		
 		Connection connection = null;
 	
-		String url1 = "jdbc:mysql://localhost/";
+		String url1 = "jdbc:mysql://localhost:3306/";
 		String user = "root";
-    	String password = "secret";
+    	String password = "";
     
     	//Try Connect
 		try {
@@ -46,13 +46,15 @@ public class MySQLStart {
 								"PRIMARY KEY (Zona_ID) )";
 			statement.executeUpdate(createZona);
 			
+			//Works until here
+			
 			//Creating Sensor Table
 			statement = connection.createStatement();
-			String createSensor = "CREATE TABLE IF NOT EXISTS Utilizador, " +
+			String createSensor = "CREATE TABLE IF NOT EXISTS Sensor, " +
 								  "(Sensor_ID VARCHAR(2) not NULL, " +
-								  "LimiteInferior decimal(5,2), " +	
-								  "LimiteSuperior decimal(5,2), " +
-								  "ID_Zona INTEGER, " +
+								  "LimiteInferior decimal(5,2) not NULL, " +	
+								  "LimiteSuperior decimal(5,2) not NULL, " +
+								  "ID_Zona 	VARCHAR(2) not NULL, " +
 								  "PRIMARY KEY (Sensor_ID) )";
 			statement.executeUpdate(createSensor);
 			
@@ -255,6 +257,12 @@ public class MySQLStart {
             
 		}
 	
+	}
+	
+	public static void main(String[] args) {
+		
+		connect();
+		
 	}
 	
 }
