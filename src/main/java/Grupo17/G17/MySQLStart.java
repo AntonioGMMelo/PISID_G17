@@ -28,6 +28,7 @@ public class MySQLStart {
     	
 			//Creating EstufaDB
 			Statement statement = connection.createStatement();
+			Statement statement2 = connection.createStatement();
 		    String sqlCreate = "CREATE DATABASE IF NOT EXISTS EstufaDB";
 		    statement.executeUpdate(sqlCreate);
 		    
@@ -49,18 +50,18 @@ public class MySQLStart {
 			//Works until here
 			
 			//Creating Sensor Table
-			statement = connection.createStatement();
-			String createSensor = "CREATE TABLE IF NOT EXISTS Sensor, " +
+			statement2 = connection.createStatement();
+			String createSensor = "CREATE TABLE IF NOT EXISTS Sensor " +
 								  "(Sensor_ID VARCHAR(2) not NULL, " +
 								  "LimiteInferior decimal(5,2) not NULL, " +	
 								  "LimiteSuperior decimal(5,2) not NULL, " +
-								  "ID_Zona 	VARCHAR(2) not NULL, " +
+								  "Zona_ID VARCHAR(2) not NULL, " +
 								  "PRIMARY KEY (Sensor_ID) )";
-			statement.executeUpdate(createSensor);
+			statement2.executeUpdate(createSensor);
 			
 			//Creating Utilizador Table
 			statement = connection.createStatement();
-			String createUtilizador = "CREATE TABLE IF NOT EXISTS Utilizador, " +
+			String createUtilizador = "CREATE TABLE IF NOT EXISTS Utilizador" +
 								  	  "(Utilizador_ID INTEGER not NULL AUTO_INCREMENT, " +
 								      "NomeInvestigador VARCHAR(50) not NULL, " +	
 								      "EmailUtilizador VARCHAR(50) not NULL, " +
@@ -70,19 +71,19 @@ public class MySQLStart {
 			
 			//Creating Cultura Table
 			statement = connection.createStatement();
-			String createCultura = "CREATE TABLE IF NOT EXISTS Cultura AUTO_INCREMENT, " +
-								  	  "(Cultura_ID INTEGER not NULL , " +
+			String createCultura = "CREATE TABLE IF NOT EXISTS Cultura " +
+								  	  "(Cultura_ID INTEGER not NULL AUTO_INCREMENT, " +
 								      "NomeCultura VARCHAR(50) not NULL, " +	
 								      "Estador TINYINT not NULL, " +
 								      "Utilizador_ID INTEGER, " +
 								      "Zona_ID VARCHAR(2) not NULL, " +
-								      "ParamaetroCultura_ID INTEGER NOT NULL, " +
+								      "ParametroCultura_ID INTEGER NOT NULL, " +
 								      "PRIMARY KEY (Cultura_ID) )";
 			statement.executeUpdate(createCultura);
 			
 			//Creating Medição Table
 			statement = connection.createStatement();
-			String createMedicao = "CREATE TABLE IF NOT EXISTS Medição, " +
+			String createMedicao = "CREATE TABLE IF NOT EXISTS Medição" +
 								  	  "(Medição_ID INTEGER not NULL AUTO_INCREMENT, " +
 								      "Hora timestamp not NULL, " +	
 								      "Leitura decimal(5,2) not NULL, " +
@@ -94,24 +95,24 @@ public class MySQLStart {
 			
 			//Creating Alerta Table
 			statement = connection.createStatement();
-			String createAlerta = "CREATE TABLE IF NOT EXISTS Alerta, " +
+			String createAlerta = "CREATE TABLE IF NOT EXISTS Alerta " +
 								  	  "(Alerta_ID INTEGER not NULL, " +
-								      "Hora timestamp not NULL, " +	
+								      "Hora timestamp not NULL DEFAULT CURRENT_TIMESTAMP, " +	
 								      "Leitura decimal(5,2) not NULL, " +
 								      "Tipo VARCHAR(1) not NULL, " +
 								      "Mensagem VARCHAR(150) not NULL, " +
-								      "HoraEscrita timestamp not NULL, " +
+								      "HoraEscrita timestamp not NULL DEFAULT CURRENT_TIMESTAMP, " +
 								      "Zona_ID VARCHAR(2) not NULL, " +
 								      "Sensor_ID VARCHAR(2) not NULL, " +
-								      "Cultura_ID, INTEGER not NULL,  " +
-								      "Utilizador_ID, INTEGER not NULL,  " +
-								      "Cultura, VARCHAR(50) not NULL,  " +
+								      "Cultura_ID INTEGER not NULL,  " +
+								      "Utilizador_ID INTEGER not NULL,  " +
+								      "Cultura VARCHAR(50) not NULL,  " +
 								      "PRIMARY KEY (Alerta_ID) )";
 			statement.executeUpdate(createAlerta);
 			
 			//Creating ParametroCultura Table
 			statement = connection.createStatement();
-			String createParametroCultura = "CREATE TABLE IF NOT EXISTS ParametroCultura, " +
+			String createParametroCultura = "CREATE TABLE IF NOT EXISTS ParametroCultura " +
 								  	  "(ParametroCultura_ID INTEGER not NULL AUTO_INCREMENT, " +
 								  	  "MinTemp decimal(5,2) not NULL, " +
 								  	  "MaxTemp decimal(5,2) not NULL, " +
@@ -126,28 +127,28 @@ public class MySQLStart {
 			
 			//Create Cultura Relations
 			statement = connection.createStatement();
-			String createCulturaFKs = "ALTER TABLE Cultura" +
-									  "ADD CONSTRAINT FK_Cultura_ParametroCultura FOREIGN KEY (ParametroCultura_ID) REFERENCES ParametroCultura (ParametroCultura_ID), " +
-									  "ADD CONSTRAINT FK_Cultura_Utiliador FOREIGN KEY (Utilizador_ID) REFERENCES Utilizador (Utilizador_ID), " +
-									  "ADD CONSTRAINT FK_Cultura_Zona FOREIGN KEY (Zona_ID) REFERENCES Zona (Zona_ID)";
+			String createCulturaFKs = "ALTER TABLE Cultura " +
+									  "ADD CONSTRAINT FK_Cultura_ParametroCultura FOREIGN KEY (ParametroCultura_ID) REFERENCES ParametroCultura(ParametroCultura_ID) ON UPDATE CASCADE ON DELETE CASCADE," +
+									  "ADD CONSTRAINT FK_Cultura_Utilizador FOREIGN KEY (Utilizador_ID) REFERENCES Utilizador (Utilizador_ID) ON UPDATE CASCADE ON DELETE SET NULL," +
+									  "ADD CONSTRAINT FK_Cultura_Zona FOREIGN KEY (Zona_ID) REFERENCES Zona (Zona_ID) ON UPDATE CASCADE ON DELETE CASCADE;";
 			statement.executeUpdate(createCulturaFKs);
 			
 			//Create Alerta Relations
 			statement = connection.createStatement();
-			String createAlertaFK = "ALTER TABLE Alerta" +
+			String createAlertaFK = "ALTER TABLE Alerta " +
 									"ADD CONSTRAINT FK_Alerta_Cultura FOREIGN KEY (Cultura_ID) REFERENCES Cultura (Cultura_ID)";
 			statement.executeUpdate(createAlertaFK);
 			
 			//Create Medição Relations
 			statement = connection.createStatement();
-			String createMedicaoSensor = "ALTER TABLE Medição" +
+			String createMedicaoSensor = "ALTER TABLE Medição " +
 										 "ADD CONSTRAINT FK_Medição_Sensor FOREIGN KEY (Sensor_ID) REFERENCES Sensor (Sensor_ID)";
 			statement.executeUpdate(createMedicaoSensor);
 			
 			//Create Sensor Relations
 			statement = connection.createStatement();
-			String createSensorZona = "ALTER TABLE Sensor" +
-									  "ADD CONSTRAINT FK_Sensor_Zona FOREIGN KEY (Zona_ID) REFERENCES Zona (Zona_ID)";
+			String createSensorZona = "ALTER TABLE Sensor " +
+									  "ADD CONSTRAINT FK_Sensor_Zona FOREIGN KEY (Zona_ID) REFERENCES Zona(Zona_ID)";
 			statement.executeUpdate(createSensorZona);
 			
 			//Creating Both Zonas and all six Sensores
@@ -176,7 +177,8 @@ public class MySQLStart {
 			preparedStatement.executeUpdate(); 
 			
 			//Creating H1
-			String addH1 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)";
+			String addH1 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)" +
+						   "VALUES (?, ?, ?, ?)";
 			
 			preparedStatement = connection.prepareStatement(addH1);
 			preparedStatement.setString(1, "H1");
@@ -186,7 +188,8 @@ public class MySQLStart {
 			preparedStatement.executeUpdate(); 
 			
 			//Creating H2
-			String addH2 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)";
+			String addH2 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)" +
+						   "VALUES (?, ?, ?, ?)";
 			
 			preparedStatement = connection.prepareStatement(addH2);
 			preparedStatement.setString(1, "H2");
@@ -196,8 +199,8 @@ public class MySQLStart {
 			preparedStatement.executeUpdate(); 
 			
 			//Creating T1
-			String addT1 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)";
-			
+			String addT1 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)" +
+						   "VALUES (?, ?, ?, ?)";
 			preparedStatement = connection.prepareStatement(addT1);
 			preparedStatement.setString(1, "T1");
 			preparedStatement.setBigDecimal(2, d); //Trocar para limite NO 194.210.86.10
@@ -206,7 +209,8 @@ public class MySQLStart {
 			preparedStatement.executeUpdate(); 
 			
 			//Creating T2
-			String addT2 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)";
+			String addT2 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)" +
+						   "VALUES (?, ?, ?, ?)";	 
 			
 			preparedStatement = connection.prepareStatement(addT2);
 			preparedStatement.setString(1, "T2");
@@ -216,24 +220,28 @@ public class MySQLStart {
 			preparedStatement.executeUpdate();
 			
 			//Creating L1
-			String addL1 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)";
+			String addL1 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)" +
+						   "VALUES (?, ?, ?, ?)";
 			
 			preparedStatement = connection.prepareStatement(addL1);
 			preparedStatement.setString(1, "L1");
 			preparedStatement.setBigDecimal(2, d); //Trocar para limite NO 194.210.86.10
-			preparedStatement.setBigDecimal(3, new BigDecimal(1000.0)); //Trocar para limite NO 194.210.86.10
+			preparedStatement.setBigDecimal(3, new BigDecimal(100.0)); //Trocar para limite NO 194.210.86.10
 			preparedStatement.setString(4, "Z1");
 			preparedStatement.executeUpdate();
 			
 			//Creating L2
-			String addL2 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)";
+			String addL2 = "INSERT INTO Sensor (Sensor_ID, LimiteInferior, LimiteSuperior, Zona_ID)" +
+						   "VALUES (?, ?, ?, ?)";
 			
 			preparedStatement = connection.prepareStatement(addL2);
 			preparedStatement.setString(1, "L2");
 			preparedStatement.setBigDecimal(2, d); //Trocar para limite NO 194.210.86.10
-			preparedStatement.setBigDecimal(3, new BigDecimal(1000.0)); //Trocar para limite NO 194.210.86.10
+			preparedStatement.setBigDecimal(3, new BigDecimal(100.0)); //Trocar para limite NO 194.210.86.10
 			preparedStatement.setString(4, "Z1");
 			preparedStatement.executeUpdate(); 
+			
+			System.out.println("Boot Succesfull");
 			
 		}catch(Exception e){
 			
