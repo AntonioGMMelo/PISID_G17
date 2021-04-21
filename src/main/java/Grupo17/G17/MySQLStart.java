@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class MySQLStart {
 
-	public static void connect() {
+	private static void connect() {
 		
 		Connection connection = null;
 	
@@ -28,7 +28,6 @@ public class MySQLStart {
     	
 			//Creating EstufaDB
 			Statement statement = connection.createStatement();
-			Statement statement2 = connection.createStatement();
 		    String sqlCreate = "CREATE DATABASE IF NOT EXISTS EstufaDB";
 		    statement.executeUpdate(sqlCreate);
 		    
@@ -50,14 +49,14 @@ public class MySQLStart {
 			//Works until here
 			
 			//Creating Sensor Table
-			statement2 = connection.createStatement();
+			statement = connection.createStatement();
 			String createSensor = "CREATE TABLE IF NOT EXISTS Sensor " +
 								  "(Sensor_ID VARCHAR(2) not NULL, " +
 								  "LimiteInferior decimal(5,2) not NULL, " +	
 								  "LimiteSuperior decimal(5,2) not NULL, " +
 								  "Zona_ID VARCHAR(2) not NULL, " +
 								  "PRIMARY KEY (Sensor_ID) )";
-			statement2.executeUpdate(createSensor);
+			statement.executeUpdate(createSensor);
 			
 			//Creating Utilizador Table
 			statement = connection.createStatement();
