@@ -73,7 +73,7 @@ public class MySQLStart {
 			String createCultura = "CREATE TABLE IF NOT EXISTS Cultura " +
 								  	  "(Cultura_ID INTEGER not NULL AUTO_INCREMENT, " +
 								      "NomeCultura VARCHAR(50) not NULL, " +	
-								      "Estador TINYINT not NULL, " +
+								      "Estado TINYINT not NULL, " +
 								      "Utilizador_ID INTEGER, " +
 								      "Zona_ID VARCHAR(2) not NULL, " +
 								      "ParametroCultura_ID INTEGER NOT NULL, " +
