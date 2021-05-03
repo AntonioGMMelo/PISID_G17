@@ -79,33 +79,24 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 		}
 	 }
 	
-	
-	
-	
-	
-	
+
 	@Override
 	public void connectionLost(Throwable cause) {
-		// TODO Auto-generated method stub
+		System.out.println("Conexão com o broker perdida" + cause);
 		
 	}
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	public void deliveryComplete(IMqttDeliveryToken token) {
-		// TODO Auto-generated method stub
-		
+	public void deliveryComplete(IMqttDeliveryToken token) {		
 	}
 
 	@Override
 	public void connectComplete(boolean reconnect, String serverURI) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Client MQTT" + (reconnect ? "reconectado" : "conectado") + "com o broker" +serverURI);
 	}
 
 }
