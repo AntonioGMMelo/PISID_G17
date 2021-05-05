@@ -1,21 +1,21 @@
 package Grupo17.G17;
-//MySQLSubscriber for MQTT
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-public class MQTT_MySQLSubscriber { // até ao 1º minuto, QOS = 2
+//MySQLSubscriber for MQTT
+public class MQTT_MySQLSubscriber implements IMqttMessageListener {
 
-	public static void main(String[] args){
 	
 	
-	
-	
-	
+	public MQTT_MySQLSubscriber(MQTT_MongoDBPublisher cliente, String topico, int qos) {
+		cliente.subscribe(qos, this, topico);
 	}
 	
-	
+	@Override
+	public void messageArrived(String topic, MqttMessage message) throws Exception {
+		System.out.println("Mensagem recebida: ");
+		System.out.println("\tTópico: " + topic);
+		System.out.println("\tMensagem: " + new String(message.getPayload()));
+	}
 }
