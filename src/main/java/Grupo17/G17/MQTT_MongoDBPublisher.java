@@ -2,6 +2,8 @@ package Grupo17.G17;
 
 import java.util.Arrays;
 
+import javax.swing.text.Document;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -12,12 +14,21 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 //MongoDBPublisher for MQTT
 public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 	
 	private final String serverURI;
 	private MqttClient client;
 	private final MqttConnectOptions mqttOptions;
+	private MongoClient mongoClient;
+	private MongoDatabase mongoDataBase;
+	private MongoCollection<Document> mongoCollection;
+	
+	
 	
 	public MQTT_MongoDBPublisher(String serverURI) {
 		
@@ -61,14 +72,15 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 		}
 	 }
 	 
-	 public void publicar(String topic, byte[] payload, int qos) {
+	 public void publicar(String topic, byte[] payload, int qos) throws MqttException {
 	        publicar(topic, payload, qos, false);
 	    }
 	 
-	 public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) {
-		 
+	 public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) throws MqttException {
+		 client = new MqttClient("tcp://localhost:27017", MqttClient.generateClientId());
 		 try {
 			 if(client.isConnected()) {
+				 System.out.println("esta ligado");
 				 client.publish(topic, payload, qos, retained);
 				 System.out.println("Topico publicado");
 			 }else {
