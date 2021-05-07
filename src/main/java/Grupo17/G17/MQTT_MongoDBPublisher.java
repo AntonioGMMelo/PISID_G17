@@ -14,7 +14,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
+import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -72,13 +74,27 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 		}
 	 }
 	 
+	 
+	 
 	 public void publicar(String topic, byte[] payload, int qos) throws MqttException {
 	        publicar(topic, payload, qos, false);
-	    }
+	 }
+	 
+	 public void connectMongo() {
+		 MongoClient client = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
+		 MongoDatabase database = client.getDatabase("estufaDB");
+		 database.getCollection("zona1");
+		 database.getCollection("zona2");
+		 
+		 System.out.println("connected to mongo");
+		 
+	 }
 	 
 	 public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) throws MqttException {
-		 client = new MqttClient("tcp://localhost:27017", MqttClient.generateClientId());
+		 //client = new MqttClient("tcp://localhost:27017", MqttClient.generateClientId());
+		// client = new MqttClient("mongo://localhost:27017", MqttClient.generateClientId());
 		 try {
+			 connectMongo();
 			 if(client.isConnected()) {
 				 System.out.println("esta ligado");
 				 client.publish(topic, payload, qos, retained);
@@ -90,7 +106,12 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 			System.out.println("Erro ao publicar");
 		}
 	 }
-	
+	 
+	//-----------------------------------------------------------------------------------------------
+	 //MongoDB
+	 
+
+	 
 
 	@Override
 	public void connectionLost(Throwable cause) {
