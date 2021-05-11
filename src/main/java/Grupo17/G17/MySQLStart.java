@@ -240,8 +240,6 @@ public class MySQLStart {
 			preparedStatement.setString(4, "Z1");
 			preparedStatement.executeUpdate(); 
 			
-			//Stored Procedures
-			
 			System.out.println("Boot Succesfull");
 			
 		}catch(Exception e){
