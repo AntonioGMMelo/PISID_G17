@@ -1,0 +1,99 @@
+#########################Stored Procedures#########################################
+
+########################CriarUtilizador############################################
+
+DELIMITER $$
+CREATE PROCEDURE CriarUtilizador(NomeUtilizador varchar(50), EmailUtilizador varchar(50), TipoUtilizador varchar(50), SenhaUtilizador varchar(50))
+BEGIN
+	FLUSH PRIVILEGES;
+    SET @command = CONCAT('CREATE USER "', EmailUtilizador, '"@localhost IDENTIFIED BY "',  SenhaUtilizador, '"');
+	SET @command2 = CONCAT('GRANT ', TipoUtilizador,' TO "', EmailUtilizador, '"@localhost');		
+    SET @command3 = CONCAT('SET DEFAULT ROLE ', TipoUtilizador,' FOR "', EmailUtilizador,'"@localhost');
+    
+    PREPARE stmt FROM @command;
+    execute stmt;
+	deallocate PREPARE stmt;
+    
+	PREPARE stmt FROM @command2;
+    execute stmt;
+    deallocate PREPARE stmt;
+    
+    PREPARE stmt FROM @command3;
+    execute stmt;
+    deallocate PREPARE stmt;
+ 
+	INSERT INTO utilizador(NomeUtilizador, EmailUtilizador, TipoUtilizador) 
+		VALUES (NomeUtilizador, EmailUtilizador, TipoUtilizador);
+END $$
+
+################################# Remover Utilizdor ########################################
+DELIMITER $$
+CREATE PROCEDURE RemoverUtilizador(EmailUtilizador varchar(50))
+
+BEGIN
+	
+    SET @command = CONCAT('DROP USER "', EmailUtilizador, '"@localhost ');
+    
+    PREPARE stmt FROM @command;
+    execute stmt;
+	deallocate PREPARE stmt;
+    
+
+ DELETE FROM `utilizador` WHERE `utilizador`.`EmailUtilizador` = EmailUtilizador;
+END
+
+
+################################# SelecionarCultura ########################################
+
+DELIMITER $$
+CREATE PROCEDURE SelecionarCultura(IDCultura int)
+BEGIN
+	
+  
+  SELECT * FROM cultura where Cultura_ID = IDCultura ;
+END $$
+
+
+
+############################## CulturasAssociadas ##########################################
+
+DELIMITER $$
+CREATE PROCEDURE CulturasAssociadas(Utilizador_ID int)
+BEGIN
+	
+  
+ SELECT * FROM cultura where cultura.Utilizador_ID = Utilizador_ID ;
+END $$
+
+
+
+
+############################# VerTodosAlertas #####################################
+
+DELIMITER $$
+CREATE PROCEDURE VerTodosAlertas(Utilizador_ID int)
+BEGIN
+	
+  
+ SELECT * FROM alerta where alerta.Utilizador_ID = Utilizador_ID ;
+END $$
+
+
+############################# VerAlertasCultura #####################################
+
+DELIMITER $$
+CREATE PROCEDURE VerAlertasCultura(Cultura_ID int)
+BEGIN
+	
+  
+ SELECT * FROM alerta where alerta.Cultura_ID = Cultura_ID ;
+END $$
+
+
+############################ AlterarParametros  ##########################################
+DELIMITER $$
+CREATE PROCEDURE AlterarParametros(minTemp decimal(5,2), maxTemp decimal(5,2), minHum decimal(5,2), maxHum decimal(5,2), minLuz decimal(5,2), maxLuz decimal(5,2), IDParamCult int )
+BEGIN
+	
+  UPDATE parametroCultura SET MinTemp = minTemp, MaxTemp = maxTemp, MinHumid = minHum, MaxHumid = maxHum, MinLuz = minLuz, MaxLuz = maxLuz WHERE parametroCultura_ID = IDParamCult;
+END $$
