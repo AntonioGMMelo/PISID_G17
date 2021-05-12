@@ -42,33 +42,28 @@ public class Getter extends Thread{
 	}
 
 	private synchronized void getStuff() throws SQLException {
-//		Mongo mongo = new MongoClient();
-//		DB db = new DB(mongo, "EstufaDB");
-		
-		
-		
 		FindIterable<Document> myCursor1 = db.getCollection("Zona1").find();
 		FindIterable<Document> myCursor2 = db.getCollection("Zona2").find();
 
-//		System.out.println(myCursor1.iterator().next().toString());
-//		System.out.println(myCursor2.iterator().next().toString());
 		int a = 0;
-		
+		Document[] aux = new Document[10];
 		while(a < 3) {
-			Document[] aux = new Document[1000];
 			Document obj = myCursor1.iterator().next();
 			if(initial) {
 				aux[0] = obj;
 				initial = false;
 			}
-			else	
-				for(int i = 0; i < aux.length; i++) {
-					if(aux[i] == null) {
-						System.out.println("devo");
+			else {
+				int i = 0;
+				while(i < aux.length) { 
+					if(aux[i] == null) { 
 						aux[i] = obj;
 						i = aux.length;
 					}
+					else
+						i++;
 				}
+			}
 			
 			medicoes = aux;
 			System.out.println(medicoes[0].toString());
@@ -78,8 +73,9 @@ public class Getter extends Thread{
 		
 		
 		while(myCursor2.iterator().hasNext()) {
-			System.out.println("chegou2");
 			Document obj = myCursor2.iterator().next();
+			System.out.println("chegou2");
+			Document obj2 = myCursor2.iterator().next();
 			medicoes[medicoes.length+1] = obj;
 			notifyAll();
 		}
@@ -94,9 +90,6 @@ public class Getter extends Thread{
 
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EstufaDB", "root", "");
 		stm = conn.createStatement();
-		
-				
-		System.out.println(objects[0].getString("Zona"));
 		
 		int indice = 0;
 		for(int i = 0; i < medicoes.length; i++)
@@ -115,8 +108,7 @@ public class Getter extends Thread{
 			stm.executeUpdate(inserir);
 		}
 		
-		stm.executeUpdate("INSERT INTO Medicao " + "VALUES(" + objects[medicoes.length-1].get("status").toString() + ")");
-		timestamp = Long.parseLong(objects[medicoes.length-1].get("DataHora").toString());
+//		timestamp = Long.parseLong(objects[medicoes.length-1].get("DataHora").toString());
 	
 		conn.close();
 	}
