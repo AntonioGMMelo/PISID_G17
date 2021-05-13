@@ -65,18 +65,7 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 	            return null;
 	        }
 	    }
-	 
-//	 public void iniciar() {
-//		 try {
-//			 System.out.println("A conectar-se ao broker mqtt" + serverURI);
-//			 client = new MqttClient(serverURI, String.format("cliente_java_%d", System.currentTimeMillis()), new MqttDefaultFilePersistence(System.getProperty("java.io.tmpdir")));
-//			 client.setCallback(this);
-//			 client.connect(mqttOptions);
-//		 }catch (MqttException ex) {
-//			System.out.println("Erro");
-//		}
-//	 }
-	 
+	
 	 
 	 
 	 public void publicar(String topic, byte[] payload, int qos) throws MqttException {
