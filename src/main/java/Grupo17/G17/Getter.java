@@ -63,6 +63,7 @@ public class Getter extends Thread{
 					else
 						i++;
 				}
+				System.out.println("assfdfdsfsd" + aux[2]);
 			}
 			
 			medicoes = aux;

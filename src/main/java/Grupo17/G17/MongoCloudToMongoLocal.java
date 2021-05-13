@@ -39,7 +39,7 @@ public class MongoCloudToMongoLocal {
 			dbLocal.getCollection("Zona1").insertOne(myCursor1.iterator().next());
 		
 		while(myCursor2.iterator().hasNext())
-			dbLocal.getCollection("Zona2").insertOne(myCursor1.iterator().next());
+			dbLocal.getCollection("Zona2").insertOne(myCursor2.iterator().next());
 	}
 
 	public static void main(String[] args) {
