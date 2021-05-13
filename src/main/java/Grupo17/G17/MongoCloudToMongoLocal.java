@@ -18,7 +18,7 @@ public class MongoCloudToMongoLocal {
 		mongoCloud = MongoClients.create(new ConnectionString("mongodb://aluno:aluno@194.210.86.10:27017/?authSource=admin"));
 		dbCloud = mongoCloud.getDatabase("g17");
 
-		dbCloud.getCollection("zona1");
+		dbCloud.getCollection("Zona1");
 		dbCloud.getCollection("Zona2");
 
 
