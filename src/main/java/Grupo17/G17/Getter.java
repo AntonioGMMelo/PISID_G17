@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 
 import org.bson.Document;
 import org.eclipse.paho.client.mqttv3.internal.ConnectActionListener;
@@ -34,7 +35,7 @@ public class Getter extends Thread{
 				getStuff();
 				while(medicoes[0] == null)
 					wait(PERIODICIDADE);
-				sendStuff(medicoes);
+//				sendStuff(medicoes);
 			}
 		} catch (SQLException | InterruptedException e) {
 			e.printStackTrace();
@@ -46,42 +47,46 @@ public class Getter extends Thread{
 		FindIterable<Document> myCursor2 = db.getCollection("Zona2").find();
 
 		int a = 0;
+		int i = 1;
+		Document obj;
 		Document[] aux = new Document[10];
-		while(a < 3) {
-			Document obj = myCursor1.iterator().next();
+		Iterator it;
+		it = myCursor1.iterator();
+		while(it.hasNext()) {
+			obj = (Document) it.next();
 			if(initial) {
 				aux[0] = obj;
 				initial = false;
 			}
 			else {
-				int i = 0;
 				while(i < aux.length) { 
-					if(aux[i] == null) { 
+					System.out.println(i);
+					if(aux[i] == null && aux[i-1] != obj) { 
+						System.out.println("cheguei");
 						aux[i] = obj;
-						i = aux.length;
+						break;
 					}
 					else
 						i++;
 				}
-				System.out.println("assfdfdsfsd" + aux[2]);
 			}
 			
+			for(int j = 0; j<aux.length; j++)
+				System.out.println("Aux " + j + " - " + aux[j]);
+			
 			medicoes = aux;
-			System.out.println(medicoes[0].toString());
 			notifyAll();
 			a++;
 		}
 		
 		
 		while(myCursor2.iterator().hasNext()) {
-			Document obj = myCursor2.iterator().next();
+			obj = myCursor2.iterator().next();
 			System.out.println("chegou2");
 			Document obj2 = myCursor2.iterator().next();
 			medicoes[medicoes.length+1] = obj;
 			notifyAll();
 		}
-		
-		System.out.println(medicoes[1]);
 	}
 
 	public synchronized void sendStuff(Document[] objects) throws SQLException {
