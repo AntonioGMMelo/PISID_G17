@@ -42,7 +42,6 @@ public class MongoCloudToMongoLocal {
 			dbLocal.getCollection("Zona2").insertOne(myCursor1.iterator().next());
 	}
 
-
 	public static void main(String[] args) {
 		connect();
 		transferData();
