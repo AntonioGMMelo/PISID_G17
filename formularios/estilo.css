@@ -1,0 +1,139 @@
+
+/* Estilizar formulário*/
+
+:root{
+
+	--Branco-Fosco: rgba(255,255,255,0.3); 
+	--Font-Main:"Trbuchet MS" , Helvetica, sans-serif;;
+	--Deep-Blue: #643d87 ;
+	--Light-Green:#f79300;
+	--Darker-Green: #db7d00;
+
+}
+
+*{
+
+	margin:0;
+	padding: 0;
+	font-size: 16px;
+	box-sizing: border-box;
+
+}
+
+body {
+
+	height:100vh;
+	width: 100%;
+	font-family: var(--Font-Main);
+	background: var(--Deep-Blue) url(imagens/fundo.jpg) no-repeat top center;
+	background-size: cover;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+}
+
+#container {	
+
+	width: 700px;
+	height: 700px;
+	background-color: var(--Branco-Fosco) ;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+}
+
+#container img {	
+
+	width: 120px;
+	height: 120px;
+	margin-top: -60px;
+	margin-bottom: 30px;
+
+}
+
+input{
+
+	height: 50px;
+	width: 80%;
+	font-size: 18px;
+	margin-bottom: 10px;
+	background-color: #fff;
+	padding-left: 40px;
+	border: none;
+	background-repeat: no-repeat;
+	background-position: 10px;
+	border-radius: 1000px;
+
+
+}
+
+input:hover,
+input:focus{
+
+	outline: none;
+	box-shadow: -5px 5px 5px darkred;
+	transform: scale(1.1);
+
+}
+
+input.email{
+
+	background-image: url(imagens/icone-usuario.png);
+
+}
+input.senha{
+	
+	background-image: url(imagens/icone-cadeado.png);
+
+}
+
+input.submit{
+
+	color: #fff;
+	background-color: var(--Light-Green);
+	padding: 5px 0;
+	height: 55px;
+	width: 95%;
+	background: linear-gradient(165deg, var(--Darker-Green), var(--Light-Green));
+
+}
+
+input.submit:focus{
+
+	background: linear-gradient(165deg, var(--Darker-Green), var(--Darker-Green), var(--Darker-Green),  Darkred);
+
+}
+
+.shadow{
+
+	margin-left: 88px;
+	margin-top: -60px;
+	position: absolute;
+	height: 50px;
+	width: 160px;
+	background:linear-gradient(165deg, transparent, transparent, transparent, Darkred);
+	border-radius: 1000px;
+	visibility: hidden;
+
+}
+
+.show{
+
+	visibility: visible;
+
+}
+
+h1{
+
+	color: red;
+	font-weight: bolder;
+	margin-left: 12px;
+
+}
