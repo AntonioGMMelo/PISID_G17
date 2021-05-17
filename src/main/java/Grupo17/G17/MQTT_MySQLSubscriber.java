@@ -5,8 +5,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 //MySQLSubscriber for MQTT
 public class MQTT_MySQLSubscriber implements IMqttMessageListener {
-
-	
 	
 	public MQTT_MySQLSubscriber(MQTT_MongoDBPublisher cliente, String topico, int qos) {
 		cliente.subscribe(qos, this, topico);

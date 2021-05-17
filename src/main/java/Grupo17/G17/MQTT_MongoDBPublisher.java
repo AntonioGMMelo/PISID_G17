@@ -77,7 +77,6 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 	    }
 	 
 	 public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) throws MqttException {
-//		 client = new MqttClient("tcp://localhost:27017", MqttClient.generateClientId());
 		 
 		 try {
 			 if(client.isConnected()) {
