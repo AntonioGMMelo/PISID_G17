@@ -1,0 +1,89 @@
+:root{
+
+    --New-Green:#228B22;
+    --Bright-Green:#20c220;
+    --Dark-Ish:rgb(97, 23, 23);
+
+}
+
+h2{
+
+    color:#FFF;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: x-large;
+    text-shadow: -1px 1px .5px darkred,
+                 1px -1px .5px darkred;
+
+}
+
+.cultura{
+
+    background: rgba(100, 3, 3, 0.5);
+    margin: 5px 10px;
+    padding: 10px 50px;
+    border-radius: 10px;
+    color: blanchedalmond;
+    display:grid;
+    grid-template-columns: auto auto;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+}
+
+.cultura > *{
+
+    padding: 5px 10px;
+    border:2px solid #000;
+
+}
+
+#container{
+
+    min-height: 80vh;
+
+}
+
+.buttons{
+
+    margin-top: 10px;
+    display: flex;
+    justify-content:space-evenly;
+    align-items: center;
+
+}
+
+a{
+
+    text-decoration: none;
+    color: var(--Dark-Ish);
+    background: linear-gradient(165deg, var(--New-Green), var(--Bright-Green));
+    cursor: pointer;
+    border-radius: 1000px;
+
+}
+
+#help{
+
+    padding: 5px 10px;
+    margin-right: 50px;
+
+}
+
+#help2{
+
+    padding: 5px 50px;
+
+}
+
+a:hover,
+a:focus{
+
+    box-shadow: -3px 3px 1px darkred;
+    outline: none;
+    background: linear-gradient(165deg, var(--New-Green), var(--Bright-Green), var(--Bright-Green), var(--Bright-Green));
+    color:#FFF;
+    transform: scale(1.1);
+
+}
