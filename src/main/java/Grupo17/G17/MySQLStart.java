@@ -82,8 +82,8 @@ public class MySQLStart {
 			
 			//Creating Medição Table
 			statement = connection.createStatement();
-			String createMedicao = "CREATE TABLE IF NOT EXISTS Medição" +
-								  	  "(Medição_ID INTEGER not NULL AUTO_INCREMENT, " +
+			String createMedicao = "CREATE TABLE IF NOT EXISTS Medicao" +
+								  	  "(Medicao_ID INTEGER not NULL AUTO_INCREMENT, " +
 								      "Hora timestamp not NULL, " +	
 								      "Leitura decimal(5,2) not NULL, " +
 								      "Valido TINYINT not NULL, " +

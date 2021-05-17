@@ -1,0 +1,31 @@
+div{
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+}
+
+#grid{
+
+    display: grid;
+    grid-template-columns: auto auto;
+    height: 40vh;
+    grid-gap: 20px;
+}
+
+a{
+   padding:25px 0;
+   width: 300px;
+   font-size: larger;
+   text-align: center;
+
+}
+
+#grid :last-child{
+
+        grid-column-end:span 2;
+
+}

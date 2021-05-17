@@ -1,0 +1,74 @@
+div{
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.flex{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+select{
+
+    border-radius: 1000px;
+    height: 50px;
+    width: 98%;
+    text-align: center;
+
+}
+
+button[type="submit"]{
+
+    margin-top: 20px;
+
+}
+
+option{
+
+    color: darkred;
+    background:#fff;
+    border-radius: 1000px;
+
+}
+
+select:hover,
+select:focus{
+
+    
+	outline: none;
+	box-shadow: -5px 5px 5px darkred;
+	transform: scale(1.1);
+
+
+}
+
+#error{
+
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    font-weight: bolder;
+    color: red;
+
+}
+
+#succes{
+    position: absolute;
+    margin-top: -450px;
+    background:linear-gradient(165deg,rgba(184, 178, 178,1),rgba(184, 178, 178,.95));
+    color: darkred;
+    height: 100px;
+    width:350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+
+}

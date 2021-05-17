@@ -1,17 +1,33 @@
 package Grupo17.G17;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import com.mongodb.client.*;
 
 public class MQTT_Main {
+	
+	
 
-	public static void main(String[] args) throws InterruptedException, MqttException {
-		MQTT_MongoDBPublisher clienteMqtt = new MQTT_MongoDBPublisher("tcp://broker.mqtt-dashboard.com:1883");
+
+	public static void main(String[] args) throws InterruptedException, MqttException, FileNotFoundException, IOException {
 		
-		clienteMqtt.iniciar();
+		Properties p = new Properties();
+		p.load(new FileInputStream("SimulateSensor.ini"));
 		
-		new MQTT_MySQLSubscriber(clienteMqtt, "topico", 0);
+		String cloudServerName = p.getProperty("cloud_server");
+		String cloudTopicName = p.getProperty("cloud_topic");
+		
+		MQTT_MongoDBPublisher cliente = new MQTT_MongoDBPublisher(cloudServerName);
+		
+		//cliente.iniciar();
+		cliente.connectCloud(p);
+		
+		new MQTT_MySQLSubscriber(cliente, cloudTopicName, 0);
 		
 		while(true) {
 			
@@ -19,7 +35,9 @@ public class MQTT_Main {
 			
 			String mensagem = ""; // lolinagem
 			
-			clienteMqtt.publicar("topico", mensagem.getBytes(), 0);
+		//	String mensagem = p.getProperty("Zona ," + "Sensor ," + "LimiteInferior ," + "LimiteSuperior ," + "ValorInicial");
+			
+			cliente.publicar(cloudTopicName, mensagem.getBytes(), 0);
 		}
 
 	}
