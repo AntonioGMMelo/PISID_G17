@@ -10,6 +10,7 @@ public class MQTT_MySQLSubscriber implements IMqttMessageListener {
 	
 	public MQTT_MySQLSubscriber(MQTT_MongoDBPublisher cliente, String topico, int qos) {
 		cliente.subscribe(qos,this, topico);
+		
 	}
 	
 	

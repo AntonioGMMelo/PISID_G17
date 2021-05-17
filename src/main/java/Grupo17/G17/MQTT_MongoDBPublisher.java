@@ -11,6 +11,7 @@ import javax.swing.text.Document;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -27,7 +28,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 //MongoDBPublisher for MQTT
-public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
+public class MQTT_MongoDBPublisher implements MqttCallback{
 	
 	private final String serverURI;
 	private MqttClient client;
@@ -76,12 +77,18 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 	 }
 	 
 //	 public void connectMongo() {
-//		 MongoClient client = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-//		 MongoDatabase database = client.getDatabase("estufaDB");
+//		 MongoClient client1 = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
+//		 MongoDatabase database = client1.getDatabase("estufaDB");
 //		 database.getCollection("zona1");
-//		 database.getCollection("zona2");
+//		// database.getCollection("zona2");
+//		 
+//		 
+//		 
 //		 
 //		 System.out.println("connected to mongo");
+//		 System.out.println( database.getCollection("zona1").toString());
+//		 
+//		 
 //		 
 //	 }
 	 
@@ -102,44 +109,7 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 		  
 	 }
 	 
-//	public synchronized void getMensagem() {
-//		
-//		FindIterable<Document> mycursor1 = (FindIterable<Document>) db.getCollection("Zona1");
-//		FindIterable<Document> mycursor2 = (FindIterable<Document>) db.getCollection("Zona2");
-//		
-//		int a = 0;
-//		
-//		while(a<3) {
-//			Document[] aux = new Document[1000];
-//			Document obj = mycursor1.iterator().next();
-//			if(initial) {
-//				aux[0] = obj;
-//				initial = false;
-//			}
-//			else	
-//				for(int i = 0; i < aux.length; i++) {
-//					if(aux[i] == null) {
-//						System.out.println("devo");
-//						aux[i] = obj;
-//						i = aux.length;
-//					}
-//				}
-//			
-//			medicoes = aux;
-//			System.out.println(medicoes[0].toString());
-//			a++;
-//		}
-//		
-//		
-//		while(mycursor2.iterator().hasNext()) {
-//			System.out.println("chegou2");
-//			Document obj = mycursor2.iterator().next();
-//			medicoes[medicoes.length+1] = obj;
-//		}
-//		
-//		System.out.println(medicoes[1]);
-//			
-//	}
+
 	 
 
 	public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) throws MqttException {
@@ -168,15 +138,13 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 		
 		
 		
+		
+		
 	}
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {		
 	}
 
-	@Override
-	public void connectComplete(boolean reconnect, String serverURI) {
-		System.out.println("Client MQTT" + (reconnect ? "reconectado" : "conectado") + "com o broker" +serverURI);
-	}
 
 }
