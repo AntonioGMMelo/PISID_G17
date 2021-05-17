@@ -7,9 +7,12 @@ import java.util.Properties;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import com.mongodb.client.*;
+
 public class MQTT_Main {
 	
 	
+
 
 	public static void main(String[] args) throws InterruptedException, MqttException, FileNotFoundException, IOException {
 		
@@ -30,9 +33,10 @@ public class MQTT_Main {
 			
 			Thread.sleep(1000);
 			
+			String mensagem = ""; // lolinagem
+			
 		//	String mensagem = p.getProperty("Zona ," + "Sensor ," + "LimiteInferior ," + "LimiteSuperior ," + "ValorInicial");
 			
-			String mensagem = "exemplo";
 			cliente.publicar(cloudTopicName, mensagem.getBytes(), 0);
 		}
 

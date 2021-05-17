@@ -145,6 +145,7 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
+		
 	}
 
 	@Override
