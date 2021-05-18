@@ -141,7 +141,7 @@ public class MySQLStart {
 			
 			//Create Medição Relations
 			statement = connection.createStatement();
-			String createMedicaoSensor = "ALTER TABLE Medição " +
+			String createMedicaoSensor = "ALTER TABLE Medicao " +
 										 "ADD CONSTRAINT FK_Medição_Sensor FOREIGN KEY (Sensor_ID) REFERENCES Sensor (Sensor_ID)";
 			statement.executeUpdate(createMedicaoSensor);
 			
