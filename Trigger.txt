@@ -1,0 +1,32 @@
+DELIMITER $$
+CREATE TRIGGER checkSensorZona 
+   BEFORE INSERT
+   ON alerta
+   FOR EACH ROW
+   BEGIN
+   DECLARE userID integer;
+   DECLARE nomeCultura varchar(50);
+     IF new.Zona_ID IN (
+                            SELECT zona.Zona_ID
+                         FROM zona
+                         WHERE zona.Zona_ID = new.Zona_ID) AND new.Sensor_ID IN ( SELECT sensor.Sensor_ID
+                                                                                 FROM sensor
+                                                                                 WHERE sensor.Sensor_ID = new.Sensor_ID AND
+                                                                                          sensor.Zona_ID = new.Zona_ID) THEN
+
+    SELECT cultura.NomeCultura, cultura.Utilizador_ID
+     INTO nomeCultura, userID
+    FROM cultura
+    WHERE cultura.Cultura_ID = new.Cultura_ID;
+
+    set new.Utilizador_ID = userID;
+    set new.Cultura= nomeCultura;
+
+    ELSE
+
+    signal sqlstate '45000';
+
+    END IF;
+   END
+   $$
+   ;
