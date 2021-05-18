@@ -90,7 +90,7 @@ public class MySQLStart {
 								      "Valido TINYINT not NULL, " +
 								      "Zona_ID VARCHAR(2) not NULL, " +
 								      "Sensor_ID VARCHAR(2) not NULL, " +
-								      "PRIMARY KEY (Medição_ID) )";
+								      "PRIMARY KEY (Medicao_ID) )";
 			statement.executeUpdate(createMedicao);
 			
 			//Creating Alerta Table
