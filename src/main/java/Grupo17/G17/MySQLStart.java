@@ -73,7 +73,7 @@ public class MySQLStart {
 			statement = connection.createStatement();
 			String createCultura = "CREATE TABLE IF NOT EXISTS Cultura " +
 								  	  "(Cultura_ID INTEGER not NULL AUTO_INCREMENT, " +
-								      "NomeCultura VARCHAR(50) not NULL, " +	
+								      "NomeCultura VARCHAR(50) not NULL Unique, " +	
 								      "Estado TINYINT not NULL, " +
 								      "Utilizador_ID INTEGER, " +
 								      "Zona_ID VARCHAR(2) not NULL, " +
