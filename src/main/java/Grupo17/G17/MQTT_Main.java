@@ -59,7 +59,7 @@ public class MQTT_Main {
 		
 		MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
 		
-		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("hotel");
+		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
 		
 		new MQTT_MySQLSubscriber(cliente, cloudTopicName, 0);
 		
@@ -70,7 +70,7 @@ public class MQTT_Main {
 		    document.append("name", "Manu");
 		    document.append("age", 22);
 		    document.append("city", "ElvasCity");
-		    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("cliente");	    
+		    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");	    
 		    localMongoCollection1.insertOne(document);
 		    
 			MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
