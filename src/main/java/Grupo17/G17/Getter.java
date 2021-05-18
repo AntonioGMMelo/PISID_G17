@@ -164,7 +164,6 @@ public class Getter extends Thread{
 		if(Integer.parseInt(Data1[1]) < Integer.parseInt(Data2[1]))
 			return -1;
 		if(Integer.parseInt(Data1[0].split("=")[1]) < Integer.parseInt(Data2[0].split("=")[1])) {
-			System.out.println("chegueiiii");
 			return -1;
 		}
 		
