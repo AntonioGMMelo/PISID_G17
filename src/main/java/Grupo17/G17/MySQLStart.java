@@ -64,7 +64,7 @@ public class MySQLStart {
 			String createUtilizador = "CREATE TABLE IF NOT EXISTS Utilizador" +
 								  	  "(Utilizador_ID INTEGER not NULL AUTO_INCREMENT, " +
 								      "NomeUtilizador VARCHAR(50) not NULL, " +	
-								      "EmailUtilizador VARCHAR(50) not NULL, " +
+								      "EmailUtilizador VARCHAR(50) not NULL unique, " +
 								      "TipoUtilizador VARCHAR(50) not NULL, " +
 								      "PRIMARY KEY (Utilizador_ID) )";
 			statement.executeUpdate(createUtilizador);
@@ -73,7 +73,7 @@ public class MySQLStart {
 			statement = connection.createStatement();
 			String createCultura = "CREATE TABLE IF NOT EXISTS Cultura " +
 								  	  "(Cultura_ID INTEGER not NULL AUTO_INCREMENT, " +
-								      "NomeCultura VARCHAR(50) not NULL, " +	
+								      "NomeCultura VARCHAR(50) not NULL Unique, " +	
 								      "Estado TINYINT not NULL, " +
 								      "Utilizador_ID INTEGER, " +
 								      "Zona_ID VARCHAR(2) not NULL, " +
@@ -90,7 +90,7 @@ public class MySQLStart {
 								      "Valido TINYINT not NULL, " +
 								      "Zona_ID VARCHAR(2) not NULL, " +
 								      "Sensor_ID VARCHAR(2) not NULL, " +
-								      "PRIMARY KEY (Medição_ID) )";
+								      "PRIMARY KEY (Medicao_ID) )";
 			statement.executeUpdate(createMedicao);
 			
 			//Creating Alerta Table
@@ -141,7 +141,7 @@ public class MySQLStart {
 			
 			//Create Medição Relations
 			statement = connection.createStatement();
-			String createMedicaoSensor = "ALTER TABLE Medição " +
+			String createMedicaoSensor = "ALTER TABLE Medicao " +
 										 "ADD CONSTRAINT FK_Medição_Sensor FOREIGN KEY (Sensor_ID) REFERENCES Sensor (Sensor_ID)";
 			statement.executeUpdate(createMedicaoSensor);
 			
