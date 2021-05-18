@@ -1,5 +1,5 @@
 DELIMITER $$
-CREATE TRIGGER checkSensorZona 
+CREATE TRIGGER checkSensorZonaGetCulturaUtilizador
    BEFORE INSERT
    ON alerta
    FOR EACH ROW
