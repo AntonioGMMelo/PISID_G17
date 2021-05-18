@@ -64,7 +64,7 @@ public class MySQLStart {
 			String createUtilizador = "CREATE TABLE IF NOT EXISTS Utilizador" +
 								  	  "(Utilizador_ID INTEGER not NULL AUTO_INCREMENT, " +
 								      "NomeUtilizador VARCHAR(50) not NULL, " +	
-								      "EmailUtilizador VARCHAR(50) not NULL, " +
+								      "EmailUtilizador VARCHAR(50) not NULL unique, " +
 								      "TipoUtilizador VARCHAR(50) not NULL, " +
 								      "PRIMARY KEY (Utilizador_ID) )";
 			statement.executeUpdate(createUtilizador);
