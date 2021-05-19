@@ -197,6 +197,6 @@ public class Getter extends Thread{
 		}
 
 		conn.close();
-		System.out.println("Last date: " + finalTimestamp);
+		System.out.println("Last date sent: " + finalTimestamp);
 	}
 }
