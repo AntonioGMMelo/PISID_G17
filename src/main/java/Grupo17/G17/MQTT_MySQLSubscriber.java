@@ -21,6 +21,8 @@ public class MQTT_MySQLSubscriber implements IMqttMessageListener {
 		System.out.println("Mensagem recebida: ");
 		System.out.println("\tTópico: " + topic);
 		System.out.println("\tMensagem: " + new String(message.getPayload()));
+//		String[] split = message.getPayload().toString().split(",");
+//		System.out.println(split);
 		
 	}
 	

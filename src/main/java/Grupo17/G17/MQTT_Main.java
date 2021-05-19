@@ -57,7 +57,7 @@ public class MQTT_Main {
 //		    cursor.close();
 //		}
 		
-		MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
+		MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://127.0.0.1:27017"));
 		
 		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
 		
@@ -65,32 +65,39 @@ public class MQTT_Main {
 		
 		while(true) {
 			 
-
-		    Document document = new Document();
-		    document.append("name", "Manu");
-		    document.append("age", 22);
-		    document.append("city", "ElvasCity");
-		    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");	    
-		    localMongoCollection1.insertOne(document);
+		    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");	
+		//    MongoCollection<Document> localMongoCollection2 = localMongoDatabase.getCollection("Zona2");
 		    
 			MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
+		//	MongoCursor<Document> cursor2 = localMongoCollection1.find().iterator();
+			
+
+	    	
 			try {
 			    while (cursor.hasNext()) {
+			    	
 			        System.out.println(cursor.next().toJson());
+			        
 			        m = cursor.next().toJson().toString();
+			        
+			        String[] split = m.split(",");
+			       
+			        
+			        Document document = new Document();
+				    document.append("Zona", split[0]);
+				    document.append("Sensor" , split[1]);
+				    document.append("Data", split[2]);
+				    document.append("Medicao", split[3]);
+			        
+			        localMongoCollection1.insertOne(document);
 			    }
+//			    while(cursor2.hasNext()) {
+//			    	
+//			    }
 			} finally {
 			    cursor.close();
 			}
 			
-//			MqttMessage message = new MqttMessage();
-//			message.setPayload("{foo: bar, lat: 0.23443, long: 12.3453245}".getBytes());
-//			message.getPayload();
-//			System.out.println(message.toString());
-			
-			cliente.publicar(cloudTopicName, m.getBytes(),0);
-			
-		//	cliente.publicar(cloudTopicName, mensagem.getBytes(), 0);
 			
 			Thread.sleep(1000);
 		}
