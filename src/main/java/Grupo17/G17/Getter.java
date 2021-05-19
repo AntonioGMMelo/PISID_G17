@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.bson.Document;
 import org.eclipse.paho.client.mqttv3.internal.ConnectActionListener;
@@ -50,6 +52,7 @@ public class Getter extends Thread{
 	private boolean initial = true;
 	com.mongodb.client.MongoClient mongo = MongoClients.create("mongodb://127.0.0.1:27017");
 	public MongoDatabase db = mongo.getDatabase("EstufaDB");
+	private String finalTimestamp;
 
 	@Override
 	public synchronized void run() {
@@ -60,7 +63,7 @@ public class Getter extends Thread{
 				sendStuff(medicoes);
 				this.medicoes = null;
 			}
-		} catch (SQLException | InterruptedException e) {
+		} catch (SQLException | InterruptedException | ParseException e) {
 			e.printStackTrace();
 		}
 	}
@@ -159,7 +162,7 @@ public class Getter extends Thread{
 		}
 	}
 
-	public synchronized void sendStuff(ArrayList<Document> medicoes) throws SQLException { //falta guardar o lastTimestamp e colocar o timestamp na tabela
+	public synchronized void sendStuff(ArrayList<Document> medicoes) throws SQLException, ParseException { //falta guardar o lastTimestamp num ficheiro
 		Connection conn = null;
 		Statement stm = null;
 
@@ -170,11 +173,23 @@ public class Getter extends Thread{
 
 		if(this.medicoes != null) {
 			for(Document m : this.medicoes) {
-				inserir = "INSERT INTO Medicao (Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
-						+ "VALUES (" + "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
+				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
+				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+				inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
+						+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
+						+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
 						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
 				System.out.println(inserir);
 				stm.executeUpdate(inserir);
+				
+				if(finalTimestamp != null) {
+					if(!checkTimestamp(sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2], finalTimestamp))
+						finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
+				}
+				else {
+					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
+				}		
 			}
 		}
 		else {
@@ -182,5 +197,6 @@ public class Getter extends Thread{
 		}
 
 		conn.close();
+		System.out.println("Last date: " + finalTimestamp);
 	}
 }
