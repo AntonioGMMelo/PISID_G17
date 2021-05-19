@@ -64,6 +64,14 @@ public class Getter extends Thread{
 	@Override
 	public synchronized void run() {
 		try {
+			File f = new File("timestamp.txt");
+			BufferedReader br;
+			if(f.exists()) {
+				br = new BufferedReader(new FileReader("timestamp.txt"));
+				lastTimestamp_zona1 = br.readLine();
+				lastTimestamp_zona2 = lastTimestamp_zona1;
+				finalTimestamp = lastTimestamp_zona1;
+			}
 			while(true) {
 				wait(PERIODICIDADE);
 				getStuff();
@@ -97,14 +105,6 @@ public class Getter extends Thread{
 		String timestamp_zona2 = null;
 		Boolean semaforo_zona1 = true;
 		Boolean semaforo_zona2 = true;
-
-		File f = new File("timestamp.txt");
-		BufferedReader br;
-		if(f.exists()) {
-			br = new BufferedReader(new FileReader("timestamp.txt"));
-			timestamp_zona1 = br.readLine();
-			timestamp_zona2 = timestamp_zona1;
-		}
 
 		while(doc.hasNext()) {
 			Document medicao = (Document) doc.next();
@@ -142,13 +142,16 @@ public class Getter extends Thread{
 	}
 
 	public Boolean checkTimestamp(String timestamp, String ultimo_timestamp) {		
+		if(timestamp == null)
+			return true;
+		
 		String[] t = timestamp.split(" at ");
 		String[] data = t[0].split(":");
 		String[] hora = t[1].split("/");
-
-		if(ultimo_timestamp == null) {
+		
+		if(ultimo_timestamp == null)
 			return true;
-		}
+		
 		String[] ultimo_t = ultimo_timestamp.split(" at ");
 		String[] ultima_data = ultimo_t[0].split(":");
 		String[] ultima_hora = ultimo_t[1].split("/");
@@ -184,15 +187,7 @@ public class Getter extends Thread{
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EstufaDB", "root", "");
 		stm = conn.createStatement();
 
-		String inserir;
-
-		File f = new File("timestamp.txt");
-		BufferedReader br;
-		if(f.exists()) {
-			br = new BufferedReader(new FileReader("timestamp.txt"));
-			finalTimestamp = br.readLine();
-		}
-		System.out.println("TIMESTAMP - " + finalTimestamp);
+		String inserir;	
 
 		if(this.medicoes != null) {
 			for(Document m : this.medicoes) {
@@ -204,9 +199,10 @@ public class Getter extends Thread{
 							+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
 							+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
 							+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
+					
+					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
 					System.out.println(inserir);
 					stm.executeUpdate(inserir);
-					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
 				}
 			}
 		}
