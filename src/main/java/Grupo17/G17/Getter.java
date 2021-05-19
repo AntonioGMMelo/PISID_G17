@@ -144,14 +144,14 @@ public class Getter extends Thread{
 	public Boolean checkTimestamp(String timestamp, String ultimo_timestamp) {		
 		if(timestamp == null)
 			return true;
-		
+
 		String[] t = timestamp.split(" at ");
 		String[] data = t[0].split(":");
 		String[] hora = t[1].split("/");
-		
+
 		if(ultimo_timestamp == null)
 			return true;
-		
+
 		String[] ultimo_t = ultimo_timestamp.split(" at ");
 		String[] ultima_data = ultimo_t[0].split(":");
 		String[] ultima_hora = ultimo_t[1].split("/");
@@ -194,16 +194,14 @@ public class Getter extends Thread{
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
 				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-				if(checkTimestamp(sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2], finalTimestamp)) {
-					inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
-							+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
-							+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
-							+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
-					
-					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
-					System.out.println(inserir);
-					stm.executeUpdate(inserir);
-				}
+				inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
+						+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
+						+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
+						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
+
+				finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
+				System.out.println(inserir);
+				stm.executeUpdate(inserir);
 			}
 		}
 		else {
@@ -211,7 +209,7 @@ public class Getter extends Thread{
 		}
 
 		conn.close();
-		
+
 		System.out.println("Last date sent: " + finalTimestamp);
 		File myObj = new File("timestamp.txt");
 		try (PrintWriter out = new PrintWriter("timestamp.txt")) {
