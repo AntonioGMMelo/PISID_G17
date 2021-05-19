@@ -1,3 +1,7 @@
+<?php
+	session_start();
+?>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -20,6 +24,13 @@
 			include_once '../Includes/DatabaseConn.php';
 
 			$user_ID = $_GET['User_ID'];
+			
+			
+			$dbConn = unserialize($_SESSION['dbConn']);
+
+	
+			$conn = mysqli_connect($dbConn->getDBServerName(), $dbConn->getDBUserName(), $dbConn->getDBPassWord(), $dbConn->getDBName() );
+			
 
 			//$sql = " SELECT * FROM alerta where Utilizador_ID = $user_ID ;";
 
@@ -48,7 +59,7 @@
 
   				echo"<div class='swiper-wrapper'>";
 
-			for($i = 1; $i <= $numAlertas; $i++){
+			for($i = $numAlertas; $i >= 1; $i--){
 				echo "<div class='swiper-slide'>";
 				echo "<div class='alerta'>";
 				echo "<p>" . "ID do alerta : " . "</p>";
