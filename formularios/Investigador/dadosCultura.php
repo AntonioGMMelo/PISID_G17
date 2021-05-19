@@ -1,3 +1,6 @@
+<?php
+	session_start();
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -18,6 +21,11 @@
 		include_once '../Includes/DatabaseConn.php';
 			
 		$cultura_ID = $_GET['Cultura_ID'];
+		
+		$dbConn = unserialize($_SESSION['dbConn']);
+
+	
+		$conn = mysqli_connect($dbConn->getDBServerName(), $dbConn->getDBUserName(), $dbConn->getDBPassWord(), $dbConn->getDBName() );
 		
 		
 		$sql = " SELECT * FROM cultura where Cultura_ID = $cultura_ID ;";

@@ -1,3 +1,7 @@
+<?php
+	session_start();
+	include_once '../Includes/DatabaseConn.php';
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -11,6 +15,136 @@
 	<body >
 
 		<h2>Associar Cultura a Investigador</h2>
+		
+		<div >
+
+			
+
+			<form action="../Includes/culturaAssocInvestigador_inc.php" method="POST">
+
+				<fieldset>
+
+					<legend>associar cultura a Investigador</legend>
+
+				
+			
+
+					<div>
+						<label for="nome">nome da cultura </label>
+						<select name="nome" id="nome">
+
+							<?php
+								$dbConn = unserialize($_SESSION['dbConn']);
+								$conn = mysqli_connect($dbConn->getDBServerName(), $dbConn->getDBUserName(), $dbConn->getDBPassWord(), $dbConn->getDBName() );
+								if (!$conn) {
+							  		die("Connection failed: " . mysqli_connect_error());
+								}
+
+								$sql = "SELECT * FROM cultura ;";
+								$result = mysqli_query($conn, $sql);
+								$numCulturas = mysqli_num_rows($result);
+
+								$culturas = array(array());
+								
+
+								if($numCulturas > 0){
+									while($row = mysqli_fetch_assoc($result)){
+										$culturas[]=$row;
+									
+										
+									}
+								}
+
+								for($i = 1; $i <= $numCulturas; $i++){
+									$nomeCultura = $culturas[$i]['NomeCultura'];
+									echo "<option> $nomeCultura </option>";
+
+								}
+
+
+
+							?>
+
+						    
+					    
+						</select>
+					
+					</div>
+
+					<div>
+						<label for="email">email Investigador </label>
+						<select name="email" id="email">
+
+							<?php
+
+								$sql = "SELECT * FROM utilizador where TipoUtilizador = 'Investigador' ;";
+								$result = mysqli_query($conn, $sql);
+								$numCulturas = mysqli_num_rows($result);
+
+								$utilizador = array(array());
+								
+
+								if($numCulturas > 0){
+									while($row = mysqli_fetch_assoc($result)){
+										$utilizador[]=$row;
+									
+										
+									}
+								}
+
+								for($i = 1; $i <= $numCulturas; $i++){
+									$emailUtilizador = $utilizador[$i]['EmailUtilizador'];
+									echo "<option> $emailUtilizador </option>";
+
+								}
+
+							?>
+
+						</select>
+
+					</div>
+
+
+
+					
+					
+ 
+
+				</fieldset>
+
+				<?php
+
+				if(isset($_GET['assoc']) && $_GET['assoc'] == 'insucess'){ ?>
+
+				
+					<div class="text-danger">
+						Associação não permitida
+					</div>
+				
+
+				<?php } ?>
+
+
+
+				<div>
+					<button  type="submit" name="submit" >Associar</button>
+				</div>
+			</form>
+
+		</div>
+
+
+				<?php
+
+				if(isset($_GET['assoc']) && $_GET['assoc'] == 'sucess'){ ?>
+
+				
+					<div class="text-danger">
+						associação executada com exito!
+					</div>
+				
+
+				<?php } ?>
 
 
 	</body>
