@@ -29,4 +29,17 @@ CREATE TRIGGER checkSensorZonaGetCulturaUtilizador
     END IF;
    END
    $$
-   ;
+
+DELIMITER $$
+CREATE TRIGGER verificarZonaMedicao
+   BEFORE INSERT ON medicao
+   FOR EACH ROW
+   BEGIN
+
+	IF NOT SUBSTRING(new.Sensor_ID, 2, 2) = SUBSTRING(new.Zona_ID , 2, 2) THEN
+	
+    	signal sqlstate '45000';
+		
+	END IF;
+   END
+$$
