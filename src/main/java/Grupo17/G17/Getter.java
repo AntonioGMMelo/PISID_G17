@@ -1,5 +1,12 @@
 package Grupo17.G17;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -63,12 +70,12 @@ public class Getter extends Thread{
 				sendStuff(medicoes);
 				this.medicoes = null;
 			}
-		} catch (SQLException | InterruptedException | ParseException e) {
+		} catch (SQLException | InterruptedException | ParseException | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public synchronized void getStuff() throws SQLException{
+	public synchronized void getStuff() throws SQLException, IOException{
 		FindIterable<Document> myCursor1 = db.getCollection("Zona1").find();
 		FindIterable<Document> myCursor2 = db.getCollection("Zona2").find();
 
@@ -83,22 +90,30 @@ public class Getter extends Thread{
 		}
 	}
 
-	public ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) {
+	public ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) throws IOException {
 		ArrayList<Document> listaMedicoes = new ArrayList<Document>();
 		Iterator doc = myCursor.iterator();
 		String timestamp_zona1 = null;
 		String timestamp_zona2 = null;
 		Boolean semaforo_zona1 = true;
 		Boolean semaforo_zona2 = true;
-		while(doc.hasNext()) {
 
+		File f = new File("timestamp.txt");
+		BufferedReader br;
+		if(f.exists()) {
+			br = new BufferedReader(new FileReader("timestamp.txt"));
+			timestamp_zona1 = br.readLine();
+			timestamp_zona2 = timestamp_zona1;
+		}
+
+		while(doc.hasNext()) {
 			Document medicao = (Document) doc.next();
 			String[] array = medicao.toString().split(",");
 			String timestamp = array[3].split("=")[1];
 			String ultimo_timestamp;
 
-			if(zona == 1) {ultimo_timestamp = this.lastTimestamp_zona1;}
-			else {ultimo_timestamp = this.lastTimestamp_zona2;}
+			if(zona == 1) {ultimo_timestamp = lastTimestamp_zona1;}
+			else {ultimo_timestamp = lastTimestamp_zona2;}
 
 
 			if(checkTimestamp(timestamp, ultimo_timestamp)) {
@@ -162,7 +177,7 @@ public class Getter extends Thread{
 		}
 	}
 
-	public synchronized void sendStuff(ArrayList<Document> medicoes) throws SQLException, ParseException { //falta guardar o lastTimestamp num ficheiro
+	public synchronized void sendStuff(ArrayList<Document> medicoes) throws SQLException, ParseException, IOException { //falta guardar o lastTimestamp num ficheiro
 		Connection conn = null;
 		Statement stm = null;
 
@@ -171,25 +186,37 @@ public class Getter extends Thread{
 
 		String inserir;
 
+		File f = new File("timestamp.txt");
+		BufferedReader br;
+		if(f.exists()) {
+			br = new BufferedReader(new FileReader("timestamp.txt"));
+			finalTimestamp = br.readLine();
+		}
+		System.out.println("TIMESTAMP - " + finalTimestamp);
+
 		if(this.medicoes != null) {
 			for(Document m : this.medicoes) {
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
 				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-				inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
-						+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
-						+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
-						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
-				System.out.println(inserir);
-				stm.executeUpdate(inserir);
-				
-				if(finalTimestamp != null) {
-					if(!checkTimestamp(sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2], finalTimestamp))
-						finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
-				}
-				else {
+				if(finalTimestamp == null){
+					inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
+							+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
+							+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
+							+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
+					System.out.println(inserir);
+					stm.executeUpdate(inserir);
 					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
-				}		
+				}
+				else if(!checkTimestamp(finalTimestamp, sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2])) {
+					inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
+							+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
+							+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
+							+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
+					System.out.println(inserir);
+					stm.executeUpdate(inserir);
+					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
+				}
 			}
 		}
 		else {
@@ -198,5 +225,10 @@ public class Getter extends Thread{
 
 		conn.close();
 		System.out.println("Last date sent: " + finalTimestamp);
+		File myObj = new File("timestamp.txt");
+		try (PrintWriter out = new PrintWriter("timestamp.txt")) {
+			System.out.println("chegou");
+			out.println(finalTimestamp);
+		}
 	}
 }
