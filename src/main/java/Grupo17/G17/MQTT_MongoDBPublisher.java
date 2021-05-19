@@ -83,15 +83,16 @@ public class MQTT_MongoDBPublisher implements MqttCallbackExtended{
 	        publicar(topic, payload, qos, false);
 	 }
 	 
-//	 public void connectMongo() {
-//		 MongoClient client = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-//		 MongoDatabase database = client.getDatabase("estufaDB");
-//		 database.getCollection("zona1");
-//		 database.getCollection("zona2");
-//		 
-//		 System.out.println("connected to mongo");
-//		 
-//	 }
+	 public void connectMongo() {
+		 MongoClient client = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
+		 MongoDatabase database = client.getDatabase("estufaDB");
+		 database.getCollection("zona1");
+		 database.getCollection("zona2");
+		 
+		 System.out.println("connected to mongo");
+		 System.out.println(database.getCollection("zona1"));
+		 
+	 }
 	 
 	 
 	 

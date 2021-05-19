@@ -24,7 +24,7 @@ public class MQTT_Main {
 		
 		MQTT_MongoDBPublisher cliente = new MQTT_MongoDBPublisher(cloudServerName);
 		
-		//cliente.iniciar();
+//		cliente.iniciar();
 		cliente.connectCloud(p);
 		
 		new MQTT_MySQLSubscriber(cliente, cloudTopicName, 0);
