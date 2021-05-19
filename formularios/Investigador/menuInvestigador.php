@@ -1,3 +1,7 @@
+<?php
+	session_start();
+?>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -17,6 +21,12 @@
 			print_r($_GET['ID']);
 
 			include_once '../Includes/DatabaseConn.php';
+			
+			$dbConn = unserialize($_SESSION['dbConn']);
+
+	
+			$conn = mysqli_connect($dbConn->getDBServerName(), $dbConn->getDBUserName(), $dbConn->getDBPassWord(), $dbConn->getDBName() );
+	
 			
 			$ID = $_GET['ID'];
 		
