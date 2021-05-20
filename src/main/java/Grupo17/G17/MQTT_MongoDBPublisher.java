@@ -26,11 +26,13 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 //MongoDBPublisher for MQTT
 public class MQTT_MongoDBPublisher implements MqttCallback{
 	
+	MqttMessage m;
 	private final String serverURI;
 	private MqttClient client;
 	private final MqttConnectOptions mqttOptions;
@@ -49,6 +51,7 @@ public class MQTT_MongoDBPublisher implements MqttCallback{
 		mqttOptions.setKeepAliveInterval(10);
 		mqttOptions.setAutomaticReconnect(true);
 		mqttOptions.setCleanSession(false);
+		
 		
 	}
 	
@@ -73,9 +76,9 @@ public class MQTT_MongoDBPublisher implements MqttCallback{
 	    }
 	 
 	 
-	 public void publicar(String topic, byte[] payload, int qos) throws MqttException {
-	        publicar(topic, payload, qos, false);
-	 }
+//	 public void publicar(String topic, byte[] payload, int qos) throws MqttException {
+//	        publicar(topic, payload, qos, false);
+//	 }
 	 
 	 public void connectCloud(Properties p) throws MqttException {
 		 String cloudServerName = p.getProperty("cloud_server");
@@ -97,19 +100,19 @@ public class MQTT_MongoDBPublisher implements MqttCallback{
 
 	 
 
-	public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) throws MqttException {
-		
-		 try {
-//			 if(client.isConnected()) {
-				 client.publish(topic, payload, qos, retained);
-				 System.out.println("Topico publicado");
-//			 }else {
-//				 System.out.println("Nao foi possivel publicar o topico");
-//			 }
-		 }catch (MqttException ex) {
-			System.out.println("Erro ao publicar");
-		}
-	 }
+//	public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) throws MqttException {
+//		
+//		 try {
+////			 if(client.isConnected()) {
+//				 client.publish(topic, payload, qos, retained);
+//				 System.out.println("Topico publicado");
+////			 }else {
+////				 System.out.println("Nao foi possivel publicar o topico");
+////			 }
+//		 }catch (MqttException ex) {
+//			System.out.println("Erro ao publicar");
+//		}
+//	 }
 	 
 
 	@Override
@@ -121,20 +124,33 @@ public class MQTT_MongoDBPublisher implements MqttCallback{
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		
-		 try {
+		
+		try {
 			 if(client.isConnected()) {
+				 System.out.println(message);
 				 client.publish(topic, message);
-				 System.out.println("Topico publicado");
+				 
+				 m=message;
+				 
+				 System.out.println("mandeiPublish");
+				 System.out.println(m);
+				
+				 System.out.println("Topico publicado:" + topic);
 			 }else {
 				 System.out.println("Nao foi possivel publicar o topico");
 			 }
 		 }catch (MqttException ex) {
 			System.out.println("Erro ao publicar");
 		}
-		
-		
-		
+
 	}
+	
+	
+	public MqttMessage getMessage() {
+		return m;
+	}
+	
+
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {		

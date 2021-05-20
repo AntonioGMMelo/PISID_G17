@@ -19,7 +19,7 @@ import com.mongodb.client.MongoDatabase;
 public class MQTT_Main {
 	
 	public static void main(String[] args) throws InterruptedException, MqttException, FileNotFoundException, IOException {
-		String m=null;
+		String m;
 		Properties p = new Properties();
 		p.load(new FileInputStream("SimulateSensor.ini"));
 		
@@ -30,75 +30,99 @@ public class MQTT_Main {
 		
 		cliente.connectCloud(p);
 		
-		//MongoClient client1 = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-		
-	//	MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017,localhost:25017,localhost:23017/?replicaSet=replicademo"));
-//		MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-//		//MongoDatabase database = localMongoClient.getDatabase("estufaDB");
-//		
-//		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("hotel");
-//		
-//		
-//		 
-//
-//	    Document document = new Document();
-//	    document.append("name", "Manu");
-//	    document.append("age", 22);
-//	    document.append("city", "ElvasCity");
-//	    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("cliente");	    localMongoCollection1.insertOne(document);
-//	    
-//		MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
-//		try {
-//		    while (cursor.hasNext()) {
-//		        System.out.println(cursor.next().toJson());
-//		        m = cursor.next().toJson().toString();
-//		    }
-//		} finally {
-//		    cursor.close();
-//		}
-		
 		MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://127.0.0.1:27017"));
 		
-		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
+		
+		Document teste = new Document();
 		
 		new MQTT_MySQLSubscriber(cliente, cloudTopicName, 0);
 		
+			
+		
 		while(true) {
-			 
-		    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");	
+			
 		//    MongoCollection<Document> localMongoCollection2 = localMongoDatabase.getCollection("Zona2");
 		    
-			MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
+		    
 		//	MongoCursor<Document> cursor2 = localMongoCollection1.find().iterator();
-			
+//			Document document = cursor.next();
 
+//	    	
+		  //  System.out.println(cliente.getMessage());
+	//	    MqttMessage message = cliente.getMessage();
+		//    System.out.println(cliente.getMessage());
+//	    	localMongoCollection1.insertOne(document);
+//			Document document = new Document();
+		    
+			MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
+			 
+		    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");
+		  
+		   System.out.println(cliente.getMessage());
+		   	m = cliente.getMessage().toString();
+		    
+		    
+		    teste = new Document();
+		    
+		    String[] split = m.split(",");
+		   
+		    String helperZona = split[0].split(":")[1].trim();
+		    String helperSensor = split[1].split(":")[1].trim();
+		    String helperData = split[2].split(":", 2)[1].trim();
+		    String helperMedicao = split[3].split(":")[1].trim();
+		    
+		    teste.append("Zona", helperZona);
+		    teste.append("Sensor" , helperSensor);
+		    teste.append("Data", helperData);
+		    teste.append("Medicao", helperMedicao);
+		    
+//		    if(cliente.getMessage()!=null) {
+		   
+//		    teste.append("teste", "teste");
+		    	
+		    	
+	    	//teste.append("Zona", "Z1").append("Sensor", "t1").append("data", "19/05").append("Medicao", "10");
 	    	
-			try {
-			    while (cursor.hasNext()) {
-			    	
-			        System.out.println(cursor.next().toJson());
+
+		    
+		  //  MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
+		    
+		    localMongoCollection1.insertOne(teste);
+		    
+//		    }    
+		    
+		    
+		//    System.out.println(cursor.next().toJson());
+		    
+		  //  m=cursor.next();
+		    
+		   
+		   
+		    
+		    
+				
+//		    System.out.println(cursor.next().toJson());
+//			        localMongoCollection1.insertOne(cursor.next());
+//			        
+//			        localMongoCollection1.insertOne(cursor.next());
 			        
-			        m = cursor.next().toJson().toString();
 			        
-			        String[] split = m.split(",");
-			       
-			        
-			        Document document = new Document();
-				    document.append("Zona", split[0]);
-				    document.append("Sensor" , split[1]);
-				    document.append("Data", split[2]);
-				    document.append("Medicao", split[3]);
-			        
-			        localMongoCollection1.insertOne(document);
-			    }
-//			    while(cursor2.hasNext()) {
-//			    	
-//			    }
-			} finally {
-			    cursor.close();
-			}
-			
-			
+//			        m = cursor.next().toJson();
+//
+//                    String[] split = m.split(",");
+//
+//                    String helperZona = split[0].split(":")[1].trim();
+//                    String helperSensor = split[1].split(":")[1].trim();
+//                    String helperData = split[2].split(":", 2)[1].trim();
+//                    String helperMedicao = split[3].split(":")[1].trim();
+//
+//                    document.append("Zona", helperZona);
+//                    document.append("Sensor" , helperSensor);
+//                    document.append("Data", helperData);
+//                    document.append("Medicao", helperMedicao);
+//
+//                    localMongoCollection1.insertOne(document);
+//			        
 			Thread.sleep(1000);
 		}
 
