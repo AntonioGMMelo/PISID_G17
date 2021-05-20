@@ -12,7 +12,7 @@
 
 		<h2>Registar Nova Cultura</h2>
 		
-		<div >
+		<div id="container">
 
 			
 
@@ -21,9 +21,9 @@
 				<fieldset>
 
 					<legend>Registar Cultura</legend>
-
-					<div>
-						<label for="nome">nome da Cultura:</label>
+					<div class="parametros">
+					<div id="nomeCultura">
+						<label for="nome">Nome da Cultura:</label>
 						<input  type="text" name="nome" id="nome" required / >
 					</div>
 
@@ -82,7 +82,7 @@
 						<input  type="number", min="-100.00", max="100.00" name="maxLuz" id="maxLuz" >
 					</div>
 					
- 
+					</div>
 
 				</fieldset>
 
@@ -91,7 +91,7 @@
 				if(isset($_GET['registarCultura']) && $_GET['registarCultura'] == 'insucess'){ ?>
 
 				
-					<div class="text-danger">
+					<div id="error" class="text-danger">
 						Cultura já existe
 					</div>
 				
@@ -113,7 +113,7 @@
 				if(isset($_GET['registarCultura']) && $_GET['registarCultura'] == 'sucess'){ ?>
 
 				
-					<div class="text-danger">
+					<div id="succes" class="text-danger">
 						Cultura registada com exito!
 					</div>
 				

@@ -18,7 +18,7 @@
 		<h2>Apagar Cultura</h2>
 		
 		
-		<div >
+		<div id="container">
 
 			
 
@@ -31,8 +31,9 @@
 				
 			
 
-					<div>
-						<label for="nome">nome da cultura </label>
+					<div class="parametros">
+						<div>
+						<label for="nome">Nome da Cultura </label>
 						<select name="nome" id="nome">
 
 							<?php
@@ -69,6 +70,7 @@
 						    
 					    
 						</select>
+						</div>
 					
 					</div>
 
@@ -83,7 +85,7 @@
 				if(isset($_GET['apagarCultura']) && $_GET['apagarCultura'] == 'insucess'){ ?>
 
 				
-					<div class="text-danger">
+					<div id="error" class="text-danger">
 						Cultura não existe
 					</div>
 				
@@ -105,7 +107,7 @@
 				if(isset($_GET['apagarCultura']) && $_GET['apagarCultura'] == 'sucess'){ ?>
 
 				
-					<div class="text-danger">
+					<div id= "succes" class="text-danger">
 						Cultura eliminada com exito!
 					</div>
 				
