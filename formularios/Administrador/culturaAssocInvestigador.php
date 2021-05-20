@@ -16,7 +16,7 @@
 
 		<h2>Associar Cultura a Investigador</h2>
 		
-		<div >
+		<div id="container">
 
 			
 
@@ -29,8 +29,9 @@
 				
 			
 
+					<div class="parametros">
 					<div>
-						<label for="nome">nome da cultura </label>
+						<label for="nome">Nome da Cultura </label>
 						<select name="nome" id="nome">
 
 							<?php
@@ -72,7 +73,7 @@
 					</div>
 
 					<div>
-						<label for="email">email Investigador </label>
+						<label for="email">Email Investigador </label>
 						<select name="email" id="email">
 
 							<?php
@@ -107,7 +108,7 @@
 
 
 					
-					
+					</div>
  
 
 				</fieldset>
@@ -117,7 +118,7 @@
 				if(isset($_GET['assoc']) && $_GET['assoc'] == 'insucess'){ ?>
 
 				
-					<div class="text-danger">
+					<div id="error" class="text-danger">
 						Associação não permitida
 					</div>
 				
@@ -139,7 +140,7 @@
 				if(isset($_GET['assoc']) && $_GET['assoc'] == 'sucess'){ ?>
 
 				
-					<div class="text-danger">
+					<div id="succes" class="text-danger">
 						associação executada com exito!
 					</div>
 				

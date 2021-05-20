@@ -1,9 +1,18 @@
 package Grupo17.G17;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.bson.Document;
 import org.eclipse.paho.client.mqttv3.internal.ConnectActionListener;
@@ -43,248 +52,186 @@ import com.mongodb.client.MongoDatabase;
 
 public class Getter extends Thread{
 	public static final int PERIODICIDADE = 1000;
-//	private long timestamp;
-	
-	private String timestamp = " ";
-	
-	private Document[] medicoes;
-	private Document[] medicoes1;
-	private Document[] medicoes2;
-	private long lastTimestamp;
+	private long timestamp;
+	ArrayList<Document> medicoes = new ArrayList<Document>();
+	private String lastTimestamp_zona1;
+	private String lastTimestamp_zona2;
 	private boolean initial = true;
-	
-	private String lastTimestamp1;
-    private String lastTimestamp2;
-	
-    com.mongodb.client.MongoClient mongo = MongoClients.create("mongodb://127.0.0.1:27017");
+	com.mongodb.client.MongoClient mongo = MongoClients.create("mongodb://127.0.0.1:27017");
 	public MongoDatabase db = mongo.getDatabase("EstufaDB");
+	private String finalTimestamp;
 
 	@Override
 	public synchronized void run() {
 		try {
-			//			while(true) {
-//			getStuff();
-			while(true) {
-				get();
-				wait(PERIODICIDADE);
+			File f = new File("timestamp.txt");
+			BufferedReader br;
+			if(f.exists()) {
+				br = new BufferedReader(new FileReader("timestamp.txt"));
+				lastTimestamp_zona1 = br.readLine();
+				lastTimestamp_zona2 = lastTimestamp_zona1;
+				finalTimestamp = lastTimestamp_zona1;
 			}
-//			while(medicoes1[0] == null && medicoes2[0] == null)
-//				wait(PERIODICIDADE);
-//			sendStuff(medicoes);
-			//			}
-		} catch (InterruptedException e) {
+			while(true) {
+				wait(PERIODICIDADE);
+				getStuff();
+				sendStuff(medicoes);
+				this.medicoes = null;
+			}
+		} catch (SQLException | InterruptedException | ParseException | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void get() {
+	public synchronized void getStuff() throws SQLException, IOException{
 		FindIterable<Document> myCursor1 = db.getCollection("Zona1").find();
 		FindIterable<Document> myCursor2 = db.getCollection("Zona2").find();
 
 		ArrayList<Document> listaMedicoes_zona1 = getMedicoes(myCursor1, 1);
 		ArrayList<Document> listaMedicoes_zona2 = getMedicoes(myCursor2, 2);
-		ArrayList<Document> both = new ArrayList<Document>();
 
 		for(Document doc : listaMedicoes_zona1) {
-			both.add(doc);
+			this.medicoes.add(doc);
 		}
 		for(Document doc : listaMedicoes_zona2) {
-			both.add(doc);
-		}
-		for(Document doc : both) {
-			System.out.println("new: " + doc.toString());
+			this.medicoes.add(doc);
 		}
 	}
 
-	public ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) {
+	public ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) throws IOException {
 		ArrayList<Document> listaMedicoes = new ArrayList<Document>();
 		Iterator doc = myCursor.iterator();
+		String timestamp_zona1 = null;
+		String timestamp_zona2 = null;
+		Boolean semaforo_zona1 = true;
+		Boolean semaforo_zona2 = true;
 
 		while(doc.hasNext()) {
 			Document medicao = (Document) doc.next();
 			String[] array = medicao.toString().split(",");
-			if(zona == 1) {
-				timestamp = lastTimestamp1;
+			String timestamp = array[3].split("=")[1];
+			String ultimo_timestamp;
+
+			if(zona == 1) {ultimo_timestamp = lastTimestamp_zona1;}
+			else {ultimo_timestamp = lastTimestamp_zona2;}
+
+
+			if(checkTimestamp(timestamp, ultimo_timestamp)) {
+				listaMedicoes.add(medicao);
+				if(zona == 1 && semaforo_zona1) {
+					timestamp_zona1 = array[3].split("=")[1];
+					semaforo_zona1 = false;
+				}
+				if(zona == 2 && semaforo_zona2){
+					timestamp_zona2 = array[3].split("=")[1];
+					semaforo_zona2 = false;
+				}
 			}
 			else {
-				timestamp = lastTimestamp2;
-			}
-			
-			if(comparesTo(array[3], timestamp) < 0) {
 				System.out.println("Esta medição já foi enviada");
-				if(zona == 1) {
-					timestamp = lastTimestamp1;
-				}
-				else {
-					timestamp = lastTimestamp2;
-				}
 				break;
 			}
-			else{
-				listaMedicoes.add(medicao);
-				if(zona == 1) {
-					lastTimestamp1 = array[3];
-				}
-				else {
-					lastTimestamp2 = array[3];
-				}
-			}
 		}
-		
-		if(zona == 1) {
-			timestamp = lastTimestamp1;
+		if(timestamp_zona1 != null) {
+			this.lastTimestamp_zona1 = timestamp_zona1;
 		}
-		else {
-			timestamp = lastTimestamp2;
+		else if(timestamp_zona2 != null) {
+			this.lastTimestamp_zona2 = timestamp_zona2;
 		}
-		
 		return listaMedicoes;
 	}
-	
-	private int comparesTo(String s1, String s2) {
-		if(s2 == null)
-			return 1;
-		
-		if(s2.equals(" "))
-			return 1;
-		
-		String[] string1 = s1.split(" ");
-		String[] string2 = s2.split(" ");
-		
-		String Data1[] = string1[1].split("/");
-		String Data2[] = string2[1].split("/");
-		String Hora1[] = string1[3].split(":");
-		String Hora2[] = string1[3].split(":");
-		
-		if(Data1 == Data2 && Hora1 == Hora2)
-			return 0;
-		
-		if(Integer.parseInt(Data1[2]) < Integer.parseInt(Data2[2]))
-			return -1;
-		if(Integer.parseInt(Data1[1]) < Integer.parseInt(Data2[1]))
-			return -1;
-		if(Integer.parseInt(Data1[0].split("=")[1]) < Integer.parseInt(Data2[0].split("=")[1])) {
-			return -1;
+
+	public Boolean checkTimestamp(String timestamp, String ultimo_timestamp) {		
+		if(timestamp == null)
+			return true;
+
+		String[] t = timestamp.split(" at ");
+		String[] data = t[0].split(":");
+		String[] hora = t[1].split("/");
+
+		if(ultimo_timestamp == null)
+			return true;
+
+		String[] ultimo_t = ultimo_timestamp.split(" at ");
+		String[] ultima_data = ultimo_t[0].split(":");
+		String[] ultima_hora = ultimo_t[1].split("/");
+
+		if(ultimo_timestamp.equals(ultimo_timestamp)) {
+			return false;
 		}
-		
-		if(Integer.parseInt(Hora1[0]) < Integer.parseInt(Hora2[0]))
-			return -1;
-		if(Integer.parseInt(Hora1[1]) < Integer.parseInt(Hora2[1]))
-			return -1;
-		if(Integer.parseInt(Hora1[2].split(",")[0]) < Integer.parseInt(Hora2[0].split(",")[0]))
-			return -1;
-		
-		return 1;
+		else {
+			if(Integer.parseInt(data[2]) <= Integer.parseInt(ultima_data[2])) {
+				if(Integer.parseInt(data[1]) <= Integer.parseInt(ultima_data[1])) {
+					if(Integer.parseInt(data[0]) <= Integer.parseInt(ultima_data[0])) {
+						if(Integer.parseInt(hora[0]) <= Integer.parseInt(ultima_hora[0])) {
+							if(Integer.parseInt(hora[1]) <= Integer.parseInt(ultima_hora[1])) {
+								if(Integer.parseInt(hora[2]) < Integer.parseInt(ultima_hora[1])) {return false;}
+								else {return true;}
+							}
+							else {return true;}
+						}
+						else {return true;}
+					}
+					else {return true;}
+				}
+				else {return true;}
+			}
+			else {return true;}
+		}
 	}
 
-	private synchronized void getStuff() throws SQLException { //falta ir so buscar se o timestamp for mais recente que o lastTimestamp
-		FindIterable<Document> myCursor1 = db.getCollection("Zona1").find();
-		FindIterable<Document> myCursor2 = db.getCollection("Zona2").find();
-
-		Document obj;
-		Document[] aux = new Document[10];
-		Iterator it = myCursor1.iterator();
-		int i = 0;
-		while(it.hasNext()) {
-			obj = (Document) it.next();
-			if(initial) {
-				aux[0] = obj;
-				initial = false;
-				i++;
-			}
-			else {
-				while(i < aux.length && i>0) { 
-					if(aux[i] == null && aux[i-1] != obj) { 
-						aux[i] = obj;
-						break;
-					}
-					else
-						i++;
-				}
-			}
-		}
-
-		int toRemove = 0;
-		for(int j = 0; j<aux.length; j++) {
-			if(aux[j] == null)
-				toRemove++;
-
-			System.out.println("Aux " + j + " - " + aux[j]);
-		}
-		medicoes1 = new Document[aux.length - toRemove];
-		for(int j = 0; j < medicoes1.length; j++)
-			medicoes1[j] = aux[j];
-		notifyAll();
-
-		Arrays.fill(aux, null);
-		initial = true;
-		it = myCursor2.iterator();
-		i = 0;
-		while(it.hasNext()) {
-			obj = (Document) it.next();
-			if(initial) {
-				aux[0] = obj;
-				initial = false;
-				i++;
-			}
-			else {
-				while(i < aux.length && i>0) {
-					if(aux[i] == null && aux[i-1] != obj) { 
-						aux[i] = obj;
-						break;
-					}
-					else
-						i++;
-				}
-			}
-		}
-
-		toRemove = 0;
-		for(int j = 0; j<aux.length; j++) {
-			if(aux[j] == null)
-				toRemove++;
-			System.out.println("Aux " + j + " - " + aux[j]);
-		}
-
-		medicoes2 = new Document[aux.length - toRemove];
-		for(int j = 0; j < medicoes2.length; j++)
-			medicoes2[j] = aux[j];
-		notifyAll();
-
-		medicoes = new Document[medicoes1.length + medicoes2.length];
-		System.arraycopy(medicoes1, 0, medicoes, 0, medicoes1.length);
-		System.arraycopy(medicoes2, 0, medicoes, medicoes1.length, medicoes2.length);
-		for(int j = 0; j<medicoes.length; j++)
-			System.out.println("Both" + j + " - " + medicoes[j]);
-	}
-
-	public synchronized void sendStuff(Document[] objects) throws SQLException { //falta guardar o lastTimestamp e colocar o timestamp na tabela
-		System.out.println("cheguei");
+	public synchronized void sendStuff(ArrayList<Document> medicoes) throws SQLException, ParseException, IOException { //falta guardar o lastTimestamp num ficheiro
 		Connection conn = null;
 		Statement stm = null;
 
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EstufaDB", "root", "");
 		stm = conn.createStatement();
 
-		int indice = 0;
-		for(int i = 0; i < objects.length; i++)
-			if(objects[i]!=null)
-				if(objects[i].get("DataHora").equals(lastTimestamp + ""))
-					indice = i;
+		String inserir;	
 
-		String inserir = null;
+		if(this.medicoes != null) {
+			for(Document m : this.medicoes) {
+				int valido = 1;
+				Double leitura;
+				Alerts alerts = new Alerts();
+				double[] parametros = buscar ao mysql?;
 
-		for(int i = indice; i < objects.length; i++) {
-			//			timestamp = Long.parseLong(objects[0].getString("DataHora"));
-			inserir = "INSERT INTO Medição (Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
-					+ "VALUES (" + "'" + objects[i].getDouble("Medicao") + "'" + "," +  "'1'" + "," 
-					+ "'" + objects[i].getString("Zona") + "'" + "," + "'" + objects[i].getString("Sensor")  + "'" + ")";
-			System.out.println(inserir);
-			stm.executeUpdate(inserir);
+				try{
+					leitura = Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]);
+				}
+				catch(NumberFormatException e){
+					valido = 0;
+					alerts.Alertar(0.0, medicoes, parametros, false);
+				}
+				
+				if(valido == 1) {
+					alerts.Alertar(leitura, medicoes, parametros, true);
+					
+					SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+					java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
+					java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+					inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
+							+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
+							+ "'" + leitura + "'" + "," +  valido + "," 
+							+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" +
+							m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
+
+					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
+					System.out.println(inserir);
+					stm.executeUpdate(inserir);
+				}
+			}
+		}
+		else {
+			System.out.println("Não existem novas medições em ambas as zonas");
 		}
 
-		//		timestamp = Long.parseLong(objects[medicoes.length-1].get("DataHora").toString());
-
 		conn.close();
+
+		System.out.println("Last date sent: " + finalTimestamp);
+		File myObj = new File("timestamp.txt");
+		try (PrintWriter out = new PrintWriter("timestamp.txt")) {
+			out.println(finalTimestamp);
+		}
 	}
 }

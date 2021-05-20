@@ -72,3 +72,9 @@ select:focus{
     border-radius: 10px;
 
 }
+
+#nomeCultura{
+
+    grid-column-end: span 2;
+
+}

@@ -126,6 +126,7 @@ public class MQTT_MongoDBPublisher implements MqttCallback{
 		
 		
 		try {
+
 			 if(client.isConnected()) {
 				 System.out.println(message);
 				 client.publish(topic, message);
@@ -143,6 +144,7 @@ public class MQTT_MongoDBPublisher implements MqttCallback{
 			System.out.println("Erro ao publicar");
 		}
 
+
 	}
 	
 	
@@ -157,4 +159,10 @@ public class MQTT_MongoDBPublisher implements MqttCallback{
 	}
 
 
+
+		
+
+
+
 }
+

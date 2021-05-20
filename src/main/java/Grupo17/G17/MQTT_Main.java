@@ -1,4 +1,3 @@
-
 package Grupo17.G17;
 
 import java.io.FileInputStream;
@@ -38,25 +37,15 @@ public class MQTT_Main {
 		new MQTT_MySQLSubscriber(cliente, cloudTopicName, 0);
 		
 			
+		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
+		
+		new MQTT_MySQLSubscriber(cliente, cloudTopicName, 0);
 		
 		while(true) {
-			
-		//    MongoCollection<Document> localMongoCollection2 = localMongoDatabase.getCollection("Zona2");
-		    
-		    
-		//	MongoCursor<Document> cursor2 = localMongoCollection1.find().iterator();
-//			Document document = cursor.next();
-
-//	    	
-		  //  System.out.println(cliente.getMessage());
-	//	    MqttMessage message = cliente.getMessage();
-		//    System.out.println(cliente.getMessage());
-//	    	localMongoCollection1.insertOne(document);
-//			Document document = new Document();
-		    
-			MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
 			 
-		    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");
+
+			 
+		MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");
 		  
 		   System.out.println(cliente.getMessage());
 		   	m = cliente.getMessage().toString();
@@ -89,44 +78,9 @@ public class MQTT_Main {
 		    
 		    localMongoCollection1.insertOne(teste);
 		    
-//		    }    
-		    
-		    
-		//    System.out.println(cursor.next().toJson());
-		    
-		  //  m=cursor.next();
-		    
-		   
-		   
-		    
-		    
-				
-//		    System.out.println(cursor.next().toJson());
-//			        localMongoCollection1.insertOne(cursor.next());
-//			        
-//			        localMongoCollection1.insertOne(cursor.next());
-			        
-			        
-//			        m = cursor.next().toJson();
-//
-//                    String[] split = m.split(",");
-//
-//                    String helperZona = split[0].split(":")[1].trim();
-//                    String helperSensor = split[1].split(":")[1].trim();
-//                    String helperData = split[2].split(":", 2)[1].trim();
-//                    String helperMedicao = split[3].split(":")[1].trim();
-//
-//                    document.append("Zona", helperZona);
-//                    document.append("Sensor" , helperSensor);
-//                    document.append("Data", helperData);
-//                    document.append("Medicao", helperMedicao);
-//
-//                    localMongoCollection1.insertOne(document);
-//			        
 			Thread.sleep(1000);
 		}
 
 	}
 
 }
-

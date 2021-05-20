@@ -40,7 +40,7 @@
 					<div class ="parametros">			
 					<div>
 						<label for="minTemp">Min Temperatura:</label>
-						<input  type="number",  step="0.1"  min="0", max="100.00" name="minTemp" id="minTemp" >
+						<input  type="number",  step="0.1"  min="0", max="100.00" name="minTemp" id="minTemp">
 					</div>
 					<div>
 						<label for="maxTemp">MAX Temperatura:</label>

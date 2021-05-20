@@ -61,7 +61,7 @@ body {
 input{
 
 	height: 50px;
-	width: 80%;
+	width: 90%;
 	font-size: 18px;
 	margin-bottom: 10px;
 	background-color: #fff;
@@ -86,12 +86,13 @@ input:focus{
 input.email{
 
 	background-image: url(imagens/icone-usuario.png);
+	margin-left:5px;
 
 }
 input.senha{
 	
 	background-image: url(imagens/icone-cadeado.png);
-
+	margin-left:5px;
 }
 
 input.submit{
@@ -113,8 +114,8 @@ input.submit:focus{
 
 .shadow{
 
-	margin-left: 88px;
-	margin-top: -60px;
+	margin-left: 95px;
+	margin-top: -55px;
 	position: absolute;
 	height: 50px;
 	width: 160px;

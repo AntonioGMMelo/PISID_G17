@@ -17,7 +17,7 @@ public class Alerts {
 			
 			double sum = 0;
 			
-			for(int i = 10 ; i < ultimasMedicoes.length ; i++) sum += Math.sqrt(Math.pow(ultimasMedicoes[i] - medicao, 2));
+			for(int i = 00 ; i < ultimasMedicoes.length ; i++) sum += Math.sqrt(Math.pow(ultimasMedicoes[i] - medicao, 2));
 		
 			if(sum >= 1) return new String[] {"G", "Sistema Evoluindo Rapidamente Para Baixo/Cima"};
 			
