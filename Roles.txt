@@ -1,0 +1,46 @@
+####################administradorAplicacao##########################################
+Create Role administradorAplicacao;
+
+GRANT SELECT INSERT, DELETE, UPDATE ON estufadb.cultura to administradorAplicacao;
+GRANT SELECT ON estufadb.utilizador to administradorAplicacao;
+GRANT SELECT INSERT, DELETE, UPDATE ON estufadb.parametrocultura to administradorAplicacao;
+
+
+GRANT EXECUTE ON PROCEDURE estufadb.CriarUtilizador to administradorAplicacao;
+GRANT EXECUTE ON PROCEDURE estufadb.RemoverUtilizador to administradorAplicacao;
+GRANT EXECUTE ON PROCEDURE estufadb.SelecionarUtilizador to administradorAplicacao;
+
+
+
+
+######################Investigador##################################
+CREATE ROLE Investigador;
+
+
+
+GRANT EXECUTE ON PROCEDURE estufadb.AlterarParametros to Investigador;
+GRANT EXECUTE ON PROCEDURE estufadb.SelecionarCultura to Investigador;
+GRANT EXECUTE ON PROCEDURE estufadb.VerAlertasCultura to Investigador;
+GRANT EXECUTE ON PROCEDURE estufadb.VerTodosAlertas to Investigador;
+GRANT EXECUTE ON PROCEDURE estufadb.CulturasAssociadas to Investigador;
+GRANT EXECUTE ON PROCEDURE estufadb.SelecionarUtilizador to Investigador;
+GRANT EXECUTE ON PROCEDURE estufadb.SelecionarParametroCultura to Investigador;
+
+
+
+################################TecnicoManutenção###########################
+CREATE ROLE tecnicoManutenção;
+
+GRANT SELECT ON estufadb.alerta to tecnicoManutenção;
+GRANT SELECT ON estufadb.cultura to tecnicoManutenção;
+GRANT SELECT ON estufadb.medicao to tecnicoManutenção;
+GRANT SELECT ON estufadb.parametrocultura to tecnicoManutenção;
+GRANT SELECT ON estufadb.utilizador to tecnicoManutenção;
+GRANT SELECT ON estufadb.zona to tecnicoManutenção;
+GRANT SELECT ON estufadb.sensor to tecnicoManutenção;
+
+
+
+
+
+

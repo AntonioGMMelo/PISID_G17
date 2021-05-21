@@ -3,6 +3,8 @@ package Grupo17.G17;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
 import java.nio.charset.StandardCharsets;
@@ -36,12 +38,14 @@ public class MqttToMysql implements MqttCallback {
 	static String cloudTopic;
 	static MongoClient localMongoClient;
 	int valido = 1;
-
+	private Deque<Double> isValid = new LinkedList<Double>();
+	private Deque<Double> medicoes = new LinkedList<Double>();
+	
 	public static void main(String[] args) throws InterruptedException, MqttSecurityException, MqttException, FileNotFoundException, IOException, SQLException {
 		
 		Connection conn = null;
 		Statement stm = null;
-
+		
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EstufaDB", "root", "");
 		stm = conn.createStatement();
 		
@@ -107,6 +111,38 @@ public class MqttToMysql implements MqttCallback {
 	    String helperSensor = split[1].split(":")[1].trim();
 	    String helperData = split[2].split(":", 2)[1].trim();
 	    String helperMedicao = split[3].split(":")[1].trim();
+	    double valid = 1;
+	    double medicao = Double.parseDouble(helperMedicao);
+	    
+	    if(Math.sqrt(Math.pow( medicao - medicoes.getLast(),2)) > 1) {
+	    	
+	    	valid = 0;
+	    	
+	    }
+	    
+	    if(isValid.size()<20) {
+	    	
+	    	isValid.add(valid);
+	    	
+	    }else {
+	    	
+	    	isValid.removeFirst();
+	    	isValid.add(valid);
+	    	
+	    }
+	    
+	    if(valid == 1) {
+	    	if(medicoes.size()<10) {
+
+	    		medicoes.add(medicao);
+
+	    	}else {
+
+	    		medicoes.removeFirst();
+	    		medicoes.add(medicao);
+	    		
+	    	}
+	    }
 	    
 	    
 	    
