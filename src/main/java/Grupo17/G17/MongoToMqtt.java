@@ -19,6 +19,8 @@ import com.mongodb.client.MongoDatabase;
 public class MongoToMqtt {
 
 	public static void main(String[] args) throws MqttException, InterruptedException {
+		
+		
 		String cloudServer = "tcp://broker.mqtt-dashboard.com:1883";
 		String cloudTopic = "g17";
 		
@@ -40,17 +42,33 @@ public class MongoToMqtt {
 	    	
 	    	Document doc = localMongoCollection1.find().sort(new Document("_id", -1)).first();
 	    	String rawMsg = doc.toString();
+	    	
+	    	System.out.println(rawMsg);
+	    	
+	    	String[] split = rawMsg.split(",");
+	    	
+	    	String[] helperData1 = split[3].split("=");
+	    
+	    	String data = helperData1[1];
+	    	
+	    	
+	    	
+	    	long dataAtual = Long.parseLong(data.replace("-", "").replace("T", "").replace(":", "").replace("Z", ""));
+	    	
 	    	//tirar a data como um long, se for maior que dataAnterior
-
-		    byte[] payload = rawMsg.getBytes();
+	    	
+			if(dataAnterior<dataAtual) {
+	    		byte[] payload = rawMsg.getBytes();
 		    
-		    MqttMessage msg = new MqttMessage(payload);
-		    msg.setQos(0);
-		    msg.setRetained(false);
-		    mqttClient.publish(cloudTopic,msg);
+	    		MqttMessage msg = new MqttMessage(payload);
+	    		msg.setQos(0);
+	    		msg.setRetained(false);
+	    		mqttClient.publish(cloudTopic,msg);
+	    		
+	    		System.out.println(msg);
+	    	}
 		    
-		    
-		    Thread.sleep(500);
+		    Thread.sleep(1000);
 	    	
 	    }
 

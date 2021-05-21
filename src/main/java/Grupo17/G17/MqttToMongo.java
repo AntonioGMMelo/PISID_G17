@@ -84,23 +84,15 @@ public class MqttToMongo implements MqttCallback {
 	    
 	    String[] split = rawMsg.split(",");
 	   
-	    String helperZona = split[0].split(":")[1].trim();
-	    String helperSensor = split[1].split(":")[1].trim();
-	    String helperData = split[2].split(":", 2)[1].trim();
-	    String helperMedicao = split[3].split(":")[1].trim();
+	    String helperZona = split[0].split(":")[1].replace("\"", "").trim();
+	    String helperSensor = split[1].split(":")[1].replace("\"", "").trim();
+	    String helperData = split[2].split(":", 2)[1].replace("\"", "").trim();
+	    String helperMedicao = split[3].split(":")[1].replace("\"", "").replace("}", "").trim();
 	    
 	    teste.append("Zona", helperZona);
 	    teste.append("Sensor" , helperSensor);
 	    teste.append("Data", helperData);
 	    teste.append("Medicao", helperMedicao);
-	    
-//	    if(cliente.getMessage()!=null) {
-	   
-//	    teste.append("teste", "teste"); 	
-	    	
-    	//teste.append("Zona", "Z1").append("Sensor", "t1").append("data", "19/05").append("Medicao", "10");
- 
-	  //  MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
 	    
 	    localMongoCollection1.insertOne(teste);
 		

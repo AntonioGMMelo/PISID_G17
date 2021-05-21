@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.util.Properties;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -30,15 +35,18 @@ public class MqttToMysql implements MqttCallback {
 	static IMqttClient mqttClient;
 	static String cloudTopic;
 	static MongoClient localMongoClient;
+	int valido = 1;
 
-	public static void main(String[] args) throws InterruptedException, MqttSecurityException, MqttException, FileNotFoundException, IOException {
-		localMongoClient = new MongoClient(new MongoClientURI("mongodb://127.0.0.1:27017"));
+	public static void main(String[] args) throws InterruptedException, MqttSecurityException, MqttException, FileNotFoundException, IOException, SQLException {
 		
-		Properties p = new Properties();
-		p.load(new FileInputStream("SimulateSensor.ini"));
+		Connection conn = null;
+		Statement stm = null;
+
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EstufaDB", "root", "");
+		stm = conn.createStatement();
 		
-		String cloudServer = p.getProperty("cloud_server");
-		cloudTopic = p.getProperty("cloud_topic");
+		String cloudServer = "tcp://broker.mqtt-dashboard.com:1883";
+		cloudTopic = "g17";
 		
 		String clientId = UUID.randomUUID().toString();
 		mqttClient = new MqttClient(cloudServer,clientId);
@@ -74,9 +82,19 @@ public class MqttToMysql implements MqttCallback {
 	public void messageArrived(String arg0, MqttMessage arg1) throws Exception {
 		System.out.println(arg1.toString());
 		
-		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
-		 
-	    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");
+		Connection conn = null;
+		Statement stm = null;
+		String inserir=null;
+
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EstufaDB", "root", "");
+		stm = conn.createStatement();
+		
+		
+//		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
+//		 
+//	    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");
+		
+		
 	    
 	    Document teste = new Document();
 	    
@@ -94,6 +112,10 @@ public class MqttToMysql implements MqttCallback {
 	    teste.append("Data", helperData);
 	    teste.append("Medicao", helperMedicao);
 	    
+	    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+	    java.util.Date utilDate = format.parse(rawMsg.split(", ")[3].split("=")[1].split(" ")[0]);
+	    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+	    
 //	    if(cliente.getMessage()!=null) {
 	   
 //	    teste.append("teste", "teste"); 	
@@ -102,7 +124,15 @@ public class MqttToMysql implements MqttCallback {
  
 	  //  MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
 	    
-	    localMongoCollection1.insertOne(teste);
+	    inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
+				+ "VALUES (" + "'" + sqlDate + " " + helperData + "'," 
+				+ "'" + helperMedicao + "'" + "," +  valido + "," 
+				+ "'" + helperZona + "'" + "," + "'" +
+				helperSensor + "'" + ")";
+	    
+		System.out.println(inserir);
+		stm.executeUpdate(inserir);
+
 		
 	}
 
