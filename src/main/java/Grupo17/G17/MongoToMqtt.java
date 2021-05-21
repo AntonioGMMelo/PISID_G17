@@ -55,8 +55,6 @@ public class MongoToMqtt {
 	    	
 	    	long dataAtual = Long.parseLong(data.replace("-", "").replace("T", "").replace(":", "").replace("Z", ""));
 	    	
-	    	//tirar a data como um long, se for maior que dataAnterior
-	    	
 			if(dataAnterior<dataAtual) {
 	    		byte[] payload = rawMsg.getBytes();
 		    
