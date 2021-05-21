@@ -191,35 +191,17 @@ public class Getter extends Thread{
 
 		if(this.medicoes != null) {
 			for(Document m : this.medicoes) {
-				int valido = 1;
-				Double leitura;
-				Alerts alerts = new Alerts();
-				double[] parametros = buscar ao mysql?;
+				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
+				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+				inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
+						+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
+						+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
+						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
 
-				try{
-					leitura = Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]);
-				}
-				catch(NumberFormatException e){
-					valido = 0;
-					alerts.Alertar(0.0, medicoes, parametros, false);
-				}
-				
-				if(valido == 1) {
-					alerts.Alertar(leitura, medicoes, parametros, true);
-					
-					SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-					java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
-					java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-					inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
-							+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
-							+ "'" + leitura + "'" + "," +  valido + "," 
-							+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" +
-							m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
-
-					finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
-					System.out.println(inserir);
-					stm.executeUpdate(inserir);
-				}
+				finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
+				System.out.println(inserir);
+				stm.executeUpdate(inserir);
 			}
 		}
 		else {
