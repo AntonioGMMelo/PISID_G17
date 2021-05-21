@@ -11,6 +11,8 @@ public class Alerts {
 
 		if(tipoDeVerificacao) { //Valid Measurements
 			
+			System.out.println(medicao + "|" + parametrosCultura[0]+"|"+parametrosCultura[1]);
+			
 			if(medicao >= parametrosCultura[1] || medicao <= parametrosCultura[0]) return new String[] {"R", "FORA DOS LIMITES!"};			
 
 			if(medicao >= 0.85*(parametrosCultura[1] - parametrosCultura[0]) + parametrosCultura[0] || medicao <= 0.15*(parametrosCultura[1] - parametrosCultura[0]) + parametrosCultura[0]) return new String[] {"O", "Proximo ao Limite!"};

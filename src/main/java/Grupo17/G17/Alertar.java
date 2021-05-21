@@ -33,11 +33,11 @@ public class Alertar extends Thread{
 		
 	}
 	
-	public double[] toArray(Deque<Double> arr) {
-	
-		double[] answer = new double[arr.size()];
+	public double[] toArray(Object[] arr) {
 		
-		for(int i = 0; i<arr.size();) answer[i] = arr.pop();
+		double[] answer = new double[arr.length];
+		
+		for(int i = 0; i<arr.length;i++) answer[i] = (double)arr[i];
 		
 		return answer;
 		
@@ -47,6 +47,7 @@ public class Alertar extends Thread{
 		
 		String min = "";
 		String max = "";
+		double[] medicoes = new double[10];
 		
 		switch(Sensor_ID){
 		
@@ -75,6 +76,7 @@ public class Alertar extends Thread{
 		      // create our mysql database connection«
 		      String myUrl = "jdbc:mysql://localhost:3306/EstufaDB";
 		      Connection conn = DriverManager.getConnection(myUrl, "root", "");
+		      
 		      String query = "SELECT Distinct cultura.Cultura_ID, "+ min +",  "+ max +
 		    		  " FROM parametrocultura,cultura WHERE cultura.ParametroCultura_ID = parametrocultura.ParametroCultura_ID AND cultura.Zona_ID='"+Zona_ID+"'";
 
@@ -93,12 +95,12 @@ public class Alertar extends Thread{
 		        double maxN = rs.getDouble(max);
 		        double[] param = new double[] {minN, maxN}; 
 		       
-		        String[] isAlert = Alerts.Alertar(medicao, toArray(ultimasMedicoes), param, valido == 1);
+		        String[] isAlert = Alerts.Alertar(medicao,toArray(ultimasMedicoes.toArray()), param, valido == 1);
 		        
 		        if(isAlert != null) {
 		        	
-		        	 Date date = new Date(System.currentTimeMillis());
-		        	 Timestamp timestamp2 = new Timestamp(date.getTime());
+		        	Date date = new Date(System.currentTimeMillis());
+		        	Timestamp timestamp2 = new Timestamp(date.getTime());
 		        	
 		        	String addMedicao = "INSERT INTO Alerta (Alerta_ID, Hora, Leitura, Tipo, Mensagem, HoraEscrita, Zona_ID, Sensor_ID, Cultura_ID)" +
 		    		        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";

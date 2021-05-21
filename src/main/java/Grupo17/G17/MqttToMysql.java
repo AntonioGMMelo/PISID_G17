@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,8 @@ public class MqttToMysql implements MqttCallback {
 	static String cloudTopic;
 	static MongoClient localMongoClient;
 	private int currentId = 1;
+	double lastMedicao = 0;
+	
 	
 	public static void main(String[] args) throws InterruptedException, MqttSecurityException, MqttException, FileNotFoundException, IOException, SQLException {
 		
@@ -97,9 +100,6 @@ public class MqttToMysql implements MqttCallback {
 	    
 	    String helperData = split[3].split("=", 2)[1].replace("T", " ").replace("Z", "").trim();
 	    
-	    
-	   // Timestamp t = new Timestamp(DateUtil.provideDateFormat().parse(helperData).getTime());
-	    
 	    System.out.println(helperData);
 	    
 	    String helperMedicao = split[4].split("=")[1].trim().replace("}","");
@@ -110,9 +110,29 @@ public class MqttToMysql implements MqttCallback {
 	    else
 	    	medicao = Double.parseDouble(helperMedicao.substring(0,7));
 	    
+	      String query2="SELECT Medicao.Leitura, Medicao.Medicao_ID"+
+	    		  " FROM Medicao WHERE medicao.Zona_ID ='"+helperZona+"'ORDER BY Medicao_ID DESC LIMIT 1";
+	     
+	      Statement st2 = conn.createStatement();
+	      
+	      // execute the query, and get a java resultset
+	      ResultSet rs2 = st2.executeQuery(query2);
+	      
+	      
+	      int index = 0;
+	      
+	      if(rs2.next()) {
+	    	  lastMedicao = rs2.getDouble("Leitura");
+	    	  currentId=rs2.getInt("Medicao_ID");
+	      }
+	      
+	      st2.close();
+	    
+	    
+	    
 	    if(helperSensor.equals("T1")) {
 	    	
-	    	if(Potato.getMedicoesT1().size()>0 && Math.sqrt(Math.pow( medicao - Potato.getMedicoesT1().getLast(),2)) > 1) {
+	    	if(Potato.getMedicoesT1().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1.5) {
 
 	    		valid = 0;
 
@@ -153,7 +173,7 @@ public class MqttToMysql implements MqttCallback {
 
 	    }else if(helperSensor.equals("T2")) {
 
-	    	if(Potato.getMedicoesT2().size()>0 && Math.sqrt(Math.pow( medicao - Potato.getMedicoesT2().getLast(),2)) > 1) {
+	    	if(Potato.getMedicoesT2().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1) {
 
 	    		valid = 0;
 
@@ -192,8 +212,9 @@ public class MqttToMysql implements MqttCallback {
 
 	    }else if(helperSensor.equals("H1")) {
 
-	    	if(Potato.getMedicoesH1().size()>0 && Math.sqrt(Math.pow( medicao - Potato.getMedicoesH1().getLast(),2)) > 1) {
-
+	    	if(Potato.getMedicoesH1().size()>0 && Math.sqrt(Math.pow(medicao - lastMedicao,2)) > 1) {
+	    		System.out.println(lastMedicao+"|"+ medicao);
+	    		
 	    		valid = 0;
 
 	    	}
@@ -204,9 +225,7 @@ public class MqttToMysql implements MqttCallback {
 	    		
 	    		if(Potato.getMedicoesH1().size()<10) {
 	    			
-	    			System.out.println(Potato.getMedicoesH1());
 	    			Potato.getMedicoesH1().add(medicao);
-	    			System.out.println(Potato.getMedicoesH1());
 	    			
 	    		}else {
 
@@ -233,7 +252,7 @@ public class MqttToMysql implements MqttCallback {
 	    	
 	    }else if(helperSensor.equals("H2")) {
 
-	    	if(Potato.getMedicoesH2().size()>0 && Math.sqrt(Math.pow( medicao - Potato.getMedicoesH2().getLast(),2)) > 1) {
+	    	if(Potato.getMedicoesH2().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1) {
 
 	    		valid = 0;
 
@@ -272,7 +291,7 @@ public class MqttToMysql implements MqttCallback {
 	    	
 	    }else if(helperSensor.equals("L1")) {
 
-	    		if(Potato.getMedicoesL1().size()>0 && Math.sqrt(Math.pow( medicao - Potato.getMedicoesL1().getLast(),2)) > 1) {
+	    		if(Potato.getMedicoesL1().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1) {
 
 	    			valid = 0;
 
@@ -312,7 +331,7 @@ public class MqttToMysql implements MqttCallback {
 	    		
 	   		}else if(helperSensor.equals("L2")) {
 
-	    			if(Potato.getMedicoesL2().size()>0 && Math.sqrt(Math.pow( medicao - Potato.getMedicoesL2().getLast(),2)) > 1) {
+	    			if(Potato.getMedicoesL2().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1) {
 
 	    				valid = 0;
 
