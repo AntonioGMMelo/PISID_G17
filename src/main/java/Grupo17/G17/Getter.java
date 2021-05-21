@@ -145,16 +145,16 @@ public class Getter extends Thread{
 		if(timestamp == null)
 			return true;
 
-		String[] t = timestamp.split(" at ");
-		String[] data = t[0].split(":");
-		String[] hora = t[1].split("/");
+		String[] t = timestamp.split("T");
+		String[] data = t[0].split("-");
+		String[] hora = t[1].split(":");
 
 		if(ultimo_timestamp == null)
 			return true;
 
-		String[] ultimo_t = ultimo_timestamp.split(" at ");
-		String[] ultima_data = ultimo_t[0].split(":");
-		String[] ultima_hora = ultimo_t[1].split("/");
+		String[] ultimo_t = ultimo_timestamp.split("T");
+		String[] ultima_data = ultimo_t[0].split("-");
+		String[] ultima_hora = ultimo_t[1].split(":");
 
 		if(ultimo_timestamp.equals(ultimo_timestamp)) {
 			return false;
@@ -165,7 +165,7 @@ public class Getter extends Thread{
 					if(Integer.parseInt(data[0]) <= Integer.parseInt(ultima_data[0])) {
 						if(Integer.parseInt(hora[0]) <= Integer.parseInt(ultima_hora[0])) {
 							if(Integer.parseInt(hora[1]) <= Integer.parseInt(ultima_hora[1])) {
-								if(Integer.parseInt(hora[2]) < Integer.parseInt(ultima_hora[1])) {return false;}
+								if(Integer.parseInt(hora[2].split("Z")[0]) < Integer.parseInt(ultima_hora[2].split("Z")[0])) {return false;}
 								else {return true;}
 							}
 							else {return true;}
@@ -191,15 +191,19 @@ public class Getter extends Thread{
 
 		if(this.medicoes != null) {
 			for(Document m : this.medicoes) {
-				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 				java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
 				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+				
+				System.out.println(m.toString());
+				System.out.println(m.toString().split("=")[4].split("T")[1].split("Z")[0]);
+				
 				inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
-						+ "VALUES (" + "'" + sqlDate + " " + m.toString().split(", ")[3].split("=")[1].split(" ")[2] + "'," 
+						+ "VALUES (" + "'" + sqlDate + " " + m.toString().split("=")[4].split("T")[1].split("Z")[0] + "'," 
 						+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
 						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
 
-				finalTimestamp = sqlDate + " at " + m.toString().split(", ")[3].split("=")[1].split(" ")[2];
+				finalTimestamp = sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0];
 				System.out.println(inserir);
 				stm.executeUpdate(inserir);
 			}
