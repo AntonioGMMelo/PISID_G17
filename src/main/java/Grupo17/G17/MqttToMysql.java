@@ -108,10 +108,7 @@ public class MqttToMysql implements MqttCallback {
 	    String helperData = split[2].split(":", 2)[1].trim();
 	    String helperMedicao = split[3].split(":")[1].trim();
 	    
-	    teste.append("Zona", helperZona);
-	    teste.append("Sensor" , helperSensor);
-	    teste.append("Data", helperData);
-	    teste.append("Medicao", helperMedicao);
+	    
 	    
 	    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 	    java.util.Date utilDate = format.parse(rawMsg.split(", ")[3].split("=")[1].split(" ")[0]);
@@ -126,7 +123,7 @@ public class MqttToMysql implements MqttCallback {
 	  //  MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
 	    
 	    inserir = "INSERT INTO Medicao (Zona, Sensor, Data, Medicao)" +
-		        "VALUES (helperZona, helperSensor, helperData, )";
+		        "VALUES (" + helperZona +", " + helperSensor + " ,"+ helperData + " ," + helperMedicao + " )";
 	    
 		System.out.println(inserir);
 		stm.executeUpdate(inserir);
