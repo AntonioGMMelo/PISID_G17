@@ -82,7 +82,7 @@ public class Getter extends Thread{
 			
 			String[] array = medicao.toString().split(",");
 			String timestamp = array[3].split("=")[1];
-			String lastTimestamp;
+			String lastTimestamp; 
 
 			if(zona == 1)
 				lastTimestamp = lastTimestamp_zona1;
