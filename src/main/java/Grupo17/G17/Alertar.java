@@ -9,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Deque;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Alertar extends Thread{
@@ -101,22 +104,96 @@ public class Alertar extends Thread{
 		        	
 		        	Date date = new Date(System.currentTimeMillis());
 		        	Timestamp timestamp2 = new Timestamp(date.getTime());
-		        	
-		        	String addMedicao = "INSERT INTO Alerta (Alerta_ID, Hora, Leitura, Tipo, Mensagem, HoraEscrita, Zona_ID, Sensor_ID, Cultura_ID)" +
-		    		        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		    		System.out.println(Medicao_ID+","+Zona_ID+","+Sensor_ID+","+medicao+","+data+","+valido+","+ ultimasMedicoes);
-		    		PreparedStatement preparedStatement = conn.prepareStatement(addMedicao);
-		    		preparedStatement.setInt(1, (int)Math.pow(Medicao_ID, id+1));
-		    		BigDecimal d = new BigDecimal(medicao);
-		    		preparedStatement.setString(2, data);
-		    		preparedStatement.setBigDecimal(3, d);
-		    		preparedStatement.setString(4, isAlert[0]);
-		    		preparedStatement.setString(5, isAlert[1]);
-		    		preparedStatement.setString(6,timestamp2.toString());
-		    		preparedStatement.setString(7, Zona_ID);
-		    		preparedStatement.setString(8, Sensor_ID);
-		    		preparedStatement.setInt(9, id);
-		    		preparedStatement.executeUpdate(); 
+		    		
+		    		try {
+		    			
+		    			System.out.println("herr");
+		    			
+		    			Dictionary<Integer,Integer> helper2 = Potato.getLastAlert();
+		    			int helper = helper2.get((Integer)id);
+		    			
+		    			System.out.println(helper2.keys().nextElement().hashCode());
+		    			System.out.println(((Integer)id).hashCode());
+		    			System.out.println();
+		    			
+		    			System.out.print("plz" + helper);
+		    			
+		    			String query3 = "SELECT alerta.HoraEscrita"+
+		  		    		  " FROM alerta,cultura WHERE cultura.Cultura_ID ='"+id+"' ORDER BY HoraEscrita DESC LIMIT 1";
+
+		    			// create the java statement
+		    			Statement st3 = conn.createStatement();
+		  		      
+		  		      	// execute the query, and get a java resultset
+		  		      	ResultSet rs3= st3.executeQuery(query);
+		  		      	
+		  		      	long t =0 ;
+		  		      	
+		  		      	if(rs3.next()) {
+		  		      		
+		  		      		t= rs3.getLong(1);
+		  		      		
+		  		      	}
+		    			
+		    			if(timestamp2.getTime() - t > helper) {
+		    				
+		    				String addMedicao = "INSERT INTO Alerta (Alerta_ID, Hora, Leitura, Tipo, Mensagem, HoraEscrita, Zona_ID, Sensor_ID, Cultura_ID)" +
+				    		        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				    		System.out.println(Medicao_ID+","+Zona_ID+","+Sensor_ID+","+medicao+","+data+","+valido+","+ ultimasMedicoes);
+				    		PreparedStatement preparedStatement = conn.prepareStatement(addMedicao);
+				    		preparedStatement.setInt(1, (int)Math.pow(Medicao_ID, id+1));
+				    		BigDecimal d = new BigDecimal(medicao);
+				    		preparedStatement.setString(2, data);
+				    		preparedStatement.setBigDecimal(3, d);
+				    		preparedStatement.setString(4, isAlert[0]);
+				    		preparedStatement.setString(5, isAlert[1]);
+				    		preparedStatement.setString(6,timestamp2.toString());
+				    		preparedStatement.setString(7, Zona_ID);
+				    		preparedStatement.setString(8, Sensor_ID);
+				    		preparedStatement.setInt(9, id);
+				    		preparedStatement.executeUpdate();
+		    				
+		    			}
+		    			
+		    			
+		    			if(helper >= 36000000) {
+		    				
+		    				Potato.getLastAlert().remove(id);
+		    				Potato.getLastAlert().put(id, 1);
+		    				
+		    			}else {
+		    				
+		    				helper *=2 ;
+		    				Potato.getLastAlert().remove(id);
+		    				Potato.getLastAlert().put(id, helper);
+		    				
+		    			}
+		    		}catch(Exception e) {
+		    			
+		    			System.out.println("EXception");
+		    			e.printStackTrace();
+		    			
+		    			Potato.getLastAlert().put(id, 1);
+		    			
+		    			String addMedicao = "INSERT INTO Alerta (Alerta_ID, Hora, Leitura, Tipo, Mensagem, HoraEscrita, Zona_ID, Sensor_ID, Cultura_ID)" +
+			    		        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			    		System.out.println("2, "+Medicao_ID+","+Zona_ID+","+Sensor_ID+","+medicao+","+data+","+valido+","+ ultimasMedicoes);
+			    		PreparedStatement preparedStatement = conn.prepareStatement(addMedicao);
+			    		preparedStatement.setInt(1, (int)Math.pow(Medicao_ID, id+1));
+			    		BigDecimal d = new BigDecimal(medicao);
+			    		preparedStatement.setString(2, data);
+			    		preparedStatement.setBigDecimal(3, d);
+			    		preparedStatement.setString(4, isAlert[0]);
+			    		preparedStatement.setString(5, isAlert[1]);
+			    		preparedStatement.setString(6,timestamp2.toString());
+			    		preparedStatement.setString(7, Zona_ID);
+			    		preparedStatement.setString(8, Sensor_ID);
+			    		preparedStatement.setInt(9, id);
+			    		preparedStatement.executeUpdate();
+	    				
+		    			
+		    		}
+		    		
 		        	
 		        }
 		        

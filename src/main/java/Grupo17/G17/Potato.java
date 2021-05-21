@@ -1,7 +1,11 @@
 package Grupo17.G17;
 
 import java.util.Deque;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class Potato {
 
@@ -17,6 +21,11 @@ public class Potato {
 	private static Deque<Double> medicoesL1 = new LinkedList<Double>();
 	private static Deque<Double> isValidL2 = new LinkedList<Double>();
 	private static Deque<Double> medicoesL2 = new LinkedList<Double>();
+	private static Dictionary<Integer, Integer> lastAlert = new Hashtable();
+	
+	public static Dictionary<Integer, Integer> getLastAlert() {
+		return lastAlert;
+	}
 	public static Deque<Double> getIsValidT1() {
 		return isValidT1;
 	}
