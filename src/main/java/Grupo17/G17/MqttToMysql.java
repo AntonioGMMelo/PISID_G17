@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
-
+import java.util.Queue;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -85,6 +85,7 @@ public class MqttToMysql implements MqttCallback {
 		Connection conn = null;
 		Statement stm = null;
 		String inserir=null;
+	
 
 		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/EstufaDB", "root", "");
 		stm = conn.createStatement();
@@ -124,11 +125,8 @@ public class MqttToMysql implements MqttCallback {
  
 	  //  MongoCursor<Document> cursor = localMongoCollection1.find().iterator();
 	    
-	    inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
-				+ "VALUES (" + "'" + sqlDate + " " + helperData + "'," 
-				+ "'" + helperMedicao + "'" + "," +  valido + "," 
-				+ "'" + helperZona + "'" + "," + "'" +
-				helperSensor + "'" + ")";
+	    inserir = "INSERT INTO Medicao (Zona, Sensor, Data, Medicao)" +
+		        "VALUES (helperZona, helperSensor, helperData, )";
 	    
 		System.out.println(inserir);
 		stm.executeUpdate(inserir);
