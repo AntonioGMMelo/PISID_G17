@@ -115,7 +115,6 @@ public class Getter extends Thread{
 			if(zona == 1) {ultimo_timestamp = lastTimestamp_zona1;}
 			else {ultimo_timestamp = lastTimestamp_zona2;}
 
-
 			if(checkTimestamp(timestamp, ultimo_timestamp)) {
 				listaMedicoes.add(medicao);
 				if(zona == 1 && semaforo_zona1) {
@@ -141,31 +140,34 @@ public class Getter extends Thread{
 		return listaMedicoes;
 	}
 
-	public Boolean checkTimestamp(String timestamp, String ultimo_timestamp) {		
+	public synchronized Boolean checkTimestamp(String timestamp, String ultimo_timestamp) {		
 		if(timestamp == null)
+			return true;
+
+		if(ultimo_timestamp == null)
 			return true;
 
 		String[] t = timestamp.split("T");
 		String[] data = t[0].split("-");
 		String[] hora = t[1].split(":");
 
-		if(ultimo_timestamp == null)
-			return true;
-
 		String[] ultimo_t = ultimo_timestamp.split("T");
+
 		String[] ultima_data = ultimo_t[0].split("-");
 		String[] ultima_hora = ultimo_t[1].split(":");
 
-		if(ultimo_timestamp.equals(ultimo_timestamp)) {
+		System.out.println(Integer.parseInt(hora[2].split("Z")[0]));
+		System.out.println(Integer.parseInt(ultima_hora[2].split("Z")[0]));
+		
+		if(ultimo_timestamp == timestamp)
 			return false;
-		}
 		else {
 			if(Integer.parseInt(data[2]) <= Integer.parseInt(ultima_data[2])) {
 				if(Integer.parseInt(data[1]) <= Integer.parseInt(ultima_data[1])) {
 					if(Integer.parseInt(data[0]) <= Integer.parseInt(ultima_data[0])) {
 						if(Integer.parseInt(hora[0]) <= Integer.parseInt(ultima_hora[0])) {
 							if(Integer.parseInt(hora[1]) <= Integer.parseInt(ultima_hora[1])) {
-								if(Integer.parseInt(hora[2].split("Z")[0]) < Integer.parseInt(ultima_hora[2].split("Z")[0])) {return false;}
+								if(Integer.parseInt(hora[2].split("Z")[0]) <= Integer.parseInt(ultima_hora[2].split("Z")[0])) {return false;}
 								else {return true;}
 							}
 							else {return true;}
@@ -194,10 +196,10 @@ public class Getter extends Thread{
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 				java.util.Date utilDate = format.parse(m.toString().split(", ")[3].split("=")[1].split(" ")[0]);
 				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-				
+
 				System.out.println(m.toString());
 				System.out.println(m.toString().split("=")[4].split("T")[1].split("Z")[0]);
-				
+
 				inserir = "INSERT INTO Medicao (Hora, Leitura, Valido, Zona_ID, Sensor_ID)" + "\r\n"
 						+ "VALUES (" + "'" + sqlDate + " " + m.toString().split("=")[4].split("T")[1].split("Z")[0] + "'," 
 						+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
@@ -214,10 +216,12 @@ public class Getter extends Thread{
 
 		conn.close();
 
-		System.out.println("Last date sent: " + finalTimestamp);
-		File myObj = new File("timestamp.txt");
-		try (PrintWriter out = new PrintWriter("timestamp.txt")) {
-			out.println(finalTimestamp);
+		if(finalTimestamp != null) {
+			System.out.println("Last date sent: " + finalTimestamp);
+			File myObj = new File("timestamp.txt");
+			try (PrintWriter out = new PrintWriter("timestamp.txt")) {
+				out.println(finalTimestamp);
+			}
 		}
 	}
 }
