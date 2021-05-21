@@ -54,6 +54,7 @@ public class Getter extends Thread{
 	}
 
 	public synchronized void getStuff() throws SQLException, IOException{
+		System.out.println("comecei o getStuff");
 		FindIterable<Document> myCursor1 = db.getCollection("Zona1").find();
 		FindIterable<Document> myCursor2 = db.getCollection("Zona2").find();
 
@@ -68,17 +69,20 @@ public class Getter extends Thread{
 		}
 	}
 
-	public ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) throws IOException {
+	public ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) throws IOException{
 		ArrayList<Document> listaMedicoes = new ArrayList<Document>();
-		Iterator<Document> doc = myCursor.iterator();
+		Iterator doc = myCursor.iterator();
 		String timestamp_zona1 = null;
 		String timestamp_zona2 = null;
 
 		while(doc.hasNext()) {
+			boolean last = false;
 			Document medicao = (Document) doc.next();
+			System.out.println(medicao);
+			
 			String[] array = medicao.toString().split(",");
 			String timestamp = array[3].split("=")[1];
-			String lastTimestamp;
+			String lastTimestamp; 
 
 			if(zona == 1)
 				lastTimestamp = lastTimestamp_zona1;
@@ -94,18 +98,21 @@ public class Getter extends Thread{
 			}
 			else {
 				System.out.println("Esta medição já foi enviada");
-				break;
 			}
 		}
+		
 		if(timestamp_zona1 != null)
 			this.lastTimestamp_zona1 = timestamp_zona1;
 		else if(timestamp_zona2 != null)
 			this.lastTimestamp_zona2 = timestamp_zona2;
-
+		
 		return listaMedicoes;
 	}
 
 	public synchronized Boolean checkTimestamp(String timestamp, String ultimo_timestamp) {		
+		System.out.println(timestamp);
+		System.out.println(ultimo_timestamp);
+		
 		if(timestamp == null)
 			return true;
 
