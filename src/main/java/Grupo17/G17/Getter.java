@@ -98,7 +98,7 @@ public class Getter extends Thread{
 		}
 	}
 
-	public ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) throws IOException {
+	public synchronized ArrayList<Document> getMedicoes(FindIterable<Document> myCursor, int zona) throws IOException {
 		ArrayList<Document> listaMedicoes = new ArrayList<Document>();
 		Iterator doc = myCursor.iterator();
 		String timestamp_zona1 = null;
@@ -141,6 +141,9 @@ public class Getter extends Thread{
 	}
 
 	public synchronized Boolean checkTimestamp(String timestamp, String ultimo_timestamp) {		
+		System.out.println("timestamp 1 - " + timestamp);
+		System.out.println("timestamp 2 - " + ultimo_timestamp);
+		
 		if(timestamp == null)
 			return true;
 
@@ -156,9 +159,6 @@ public class Getter extends Thread{
 		String[] ultima_data = ultimo_t[0].split("-");
 		String[] ultima_hora = ultimo_t[1].split(":");
 
-		System.out.println(Integer.parseInt(hora[2].split("Z")[0]));
-		System.out.println(Integer.parseInt(ultima_hora[2].split("Z")[0]));
-		
 		if(ultimo_timestamp == timestamp)
 			return false;
 		else {
@@ -206,6 +206,7 @@ public class Getter extends Thread{
 						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1]  + "'" + ")";
 
 				finalTimestamp = sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0];
+
 				System.out.println(inserir);
 				stm.executeUpdate(inserir);
 			}
