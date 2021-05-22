@@ -107,16 +107,8 @@ public class Alertar extends Thread{
 		    		
 		    		try {
 		    			
-		    			System.out.println("herr");
-		    			
 		    			Dictionary<Integer,Integer> helper2 = Potato.getLastAlert();
-		    			int helper = helper2.get((Integer)id);
-		    			
-		    			System.out.println(helper2.keys().nextElement().hashCode());
-		    			System.out.println(((Integer)id).hashCode());
-		    			System.out.println();
-		    			
-		    			System.out.print("plz" + helper);
+		    			int helper = helper2.get(id);
 		    			
 		    			String query3 = "SELECT alerta.HoraEscrita"+
 		  		    		  " FROM alerta,cultura WHERE cultura.Cultura_ID ='"+id+"' ORDER BY HoraEscrita DESC LIMIT 1";
@@ -125,17 +117,17 @@ public class Alertar extends Thread{
 		    			Statement st3 = conn.createStatement();
 		  		      
 		  		      	// execute the query, and get a java resultset
-		  		      	ResultSet rs3= st3.executeQuery(query);
+		  		      	ResultSet rs3= st3.executeQuery(query3);
 		  		      	
-		  		      	long t =0 ;
+		  		      	Timestamp t = null;
 		  		      	
 		  		      	if(rs3.next()) {
 		  		      		
-		  		      		t= rs3.getLong(1);
+		  		      		t= rs3.getTimestamp("HoraEscrita");
 		  		      		
 		  		      	}
 		    			
-		    			if(timestamp2.getTime() - t > helper) {
+		    			if(timestamp2.getTime() - t.getTime() > helper) {
 		    				
 		    				String addMedicao = "INSERT INTO Alerta (Alerta_ID, Hora, Leitura, Tipo, Mensagem, HoraEscrita, Zona_ID, Sensor_ID, Cultura_ID)" +
 				    		        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -153,31 +145,30 @@ public class Alertar extends Thread{
 				    		preparedStatement.setInt(9, id);
 				    		preparedStatement.executeUpdate();
 		    				
+				    		if(helper >= 36000000) 	{
+			    				
+			    				Potato.getLastAlert().remove(id);
+			    				Potato.getLastAlert().put(id, 1000);
+			    				
+			    			}else {
+			    				
+			    				helper *=2 ;
+			    				Potato.getLastAlert().remove(id);
+			    				Potato.getLastAlert().put(id, helper);
+			    				
+			    			}
+		    			
 		    			}
 		    			
-		    			
-		    			if(helper >= 36000000) {
-		    				
-		    				Potato.getLastAlert().remove(id);
-		    				Potato.getLastAlert().put(id, 1);
-		    				
-		    			}else {
-		    				
-		    				helper *=2 ;
-		    				Potato.getLastAlert().remove(id);
-		    				Potato.getLastAlert().put(id, helper);
-		    				
-		    			}
 		    		}catch(Exception e) {
 		    			
-		    			System.out.println("EXception");
 		    			e.printStackTrace();
 		    			
-		    			Potato.getLastAlert().put(id, 1);
+		    			Potato.getLastAlert().put(id, 1000);
 		    			
 		    			String addMedicao = "INSERT INTO Alerta (Alerta_ID, Hora, Leitura, Tipo, Mensagem, HoraEscrita, Zona_ID, Sensor_ID, Cultura_ID)" +
 			    		        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			    		System.out.println("2, "+Medicao_ID+","+Zona_ID+","+Sensor_ID+","+medicao+","+data+","+valido+","+ ultimasMedicoes);
+			    		System.out.println("2: "+Medicao_ID+","+Zona_ID+","+Sensor_ID+","+medicao+","+data+","+valido+","+ ultimasMedicoes);
 			    		PreparedStatement preparedStatement = conn.prepareStatement(addMedicao);
 			    		preparedStatement.setInt(1, (int)Math.pow(Medicao_ID, id+1));
 			    		BigDecimal d = new BigDecimal(medicao);
