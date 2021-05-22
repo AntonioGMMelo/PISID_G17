@@ -132,7 +132,7 @@ public class MqttToMysql implements MqttCallback {
 	    
 	    if(helperSensor.equals("T1")) {
 	    	
-	    	if(Potato.getMedicoesT1().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1.5) {
+	    	if(Potato.getMedicoesT1().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1) {
 
 	    		valid = 0;
 
