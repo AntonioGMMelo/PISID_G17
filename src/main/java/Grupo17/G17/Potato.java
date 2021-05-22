@@ -17,9 +17,7 @@ public class Potato {
 	private static Deque<Double> medicoesH1 = new LinkedList<Double>();
 	private static Deque<Double> isValidH2 = new LinkedList<Double>();
 	private static Deque<Double> medicoesH2 = new LinkedList<Double>();
-	private static Deque<Double> isValidL1 = new LinkedList<Double>();
 	private static Deque<Double> medicoesL1 = new LinkedList<Double>();
-	private static Deque<Double> isValidL2 = new LinkedList<Double>();
 	private static Deque<Double> medicoesL2 = new LinkedList<Double>();
 	private static Dictionary<Integer, Integer> lastAlert = new Hashtable();
 	
@@ -53,15 +51,8 @@ public class Potato {
 	public static Deque<Double> getMedicoesH2() {
 		return medicoesH2;
 	}
-	public static Deque<Double> getIsValidL1() {
-		return isValidL1;
-	}
 	public static Deque<Double> getMedicoesL1() {
 		return medicoesL1;
-	}
-	
-	public static Deque<Double> getIsValidL2() {
-		return isValidL2;
 	}
 	public static Deque<Double> getMedicoesL2() {
 		return medicoesL2;

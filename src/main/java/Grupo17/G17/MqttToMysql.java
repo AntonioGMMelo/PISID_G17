@@ -291,87 +291,38 @@ public class MqttToMysql implements MqttCallback {
 	    	
 	    }else if(helperSensor.equals("L1")) {
 
-	    		if(Potato.getMedicoesL1().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1) {
+	    	new Alertar(currentId,helperZona, helperSensor, medicao, helperData, (int)valid, Potato.getMedicoesL1()).start();
 
-	    			valid = 0;
+	    	if(Potato.getMedicoesL1().size()<10) {
 
-	    		}
+	    		Potato.getMedicoesL1().add(medicao);
 
-	    		if(valid == 1) {
-	    			
-	    			new Alertar(currentId,helperZona, helperSensor, medicao, helperData, (int)valid, Potato.getMedicoesL1()).start();
-	    			
-	    			if(Potato.getMedicoesL1().size()<10) {
+	    	}else {
 
-	    				Potato.getMedicoesL1().add(medicao);
+	    		Potato.getMedicoesL1().removeFirst();
+	    		Potato.getMedicoesL1().add(medicao);
 
-	    			}else {
+	    	}	    	
 
-	    				Potato.getMedicoesL1().removeFirst();
-	    				Potato.getMedicoesL1().add(medicao);
 
-	    			}
-	    		}else {
-	    			
-	    			new Alertar(currentId,helperZona, helperSensor, medicao, helperData, (int)valid, Potato.getIsValidL1()).start();
-	    			
-	    		}
-	    		
-	    		if(Potato.getIsValidL1().size()<20) {
+	    }else if(helperSensor.equals("L2")) {
 
-	    			Potato.getIsValidL1().add(valid);
 
-	    		}else {
+	    	new Alertar(currentId,helperZona, helperSensor, medicao, helperData, (int)valid, Potato.getMedicoesL2()).start();
 
-	    			Potato.getIsValidL1().removeFirst();
-	    			Potato.getIsValidL1().add(valid);
+	    	if(Potato.getMedicoesL2().size()<10) {
 
-	    		}
+	    		Potato.getMedicoesL2().add(medicao);
 
-	    		
-	   		}else if(helperSensor.equals("L2")) {
+	    	}else{
 
-	    			if(Potato.getMedicoesL2().size()>0 && Math.sqrt(Math.pow( medicao - lastMedicao,2)) > 1) {
+	    		Potato.getMedicoesL2().removeFirst();
+	    		Potato.getMedicoesL2().add(medicao);
 
-	    				valid = 0;
+	    	}
 
-	    			}
 
-	    			
-
-	    			if(valid == 1) {
-	    				
-	    				new Alertar(currentId,helperZona, helperSensor, medicao, helperData, (int)valid, Potato.getMedicoesL2()).start();
-	    				
-	    				if(Potato.getMedicoesL2().size()<10) {
-
-	    					Potato.getMedicoesL2().add(medicao);
-
-	    				}else{
-
-	    					Potato.getMedicoesL2().removeFirst();
-	    					Potato.getMedicoesL2().add(medicao);
-
-	    				}
-	    				
-	    			}else {
-	    				
-	    				new Alertar(currentId,helperZona, helperSensor, medicao, helperData, (int)valid, Potato.getIsValidL2()).start();
-	    				
-	    			}
-	    			
-	    			if(Potato.getIsValidL2().size()<20) {
-
-	    				Potato.getIsValidL2().add(valid);
-
-	    			}else {
-
-	    				Potato.getIsValidL2().removeFirst();
-	    				Potato.getIsValidL2().add(valid);
-
-	    			}
-	    			
-	    		}
+	    }
 	    
 	    
 
