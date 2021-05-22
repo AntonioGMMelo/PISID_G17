@@ -21,6 +21,8 @@ public class MongoToMqtt {
 	public static void main(String[] args) throws MqttException, InterruptedException {
 		
 		
+		Baseline.main(args);
+		
 		String cloudServer = "tcp://broker.mqtt-dashboard.com:1883";
 		String cloudTopic = "g17";
 		
