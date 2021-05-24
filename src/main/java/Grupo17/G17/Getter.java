@@ -34,6 +34,14 @@ public class Getter extends Thread{
 	public synchronized void run() {
 		try {
 			while(true) {
+				File f = new File("timestamp.txt");
+				BufferedReader br;
+				if(f.exists()) {
+					br = new BufferedReader(new FileReader("timestamp.txt"));
+					lastTimestamp = br.readLine();
+					finalTimestamp = lastTimestamp;
+					br.close();
+				}
 				wait(PERIODICIDADE);
 				getStuff();
 				sendStuff(medicoes);
@@ -151,13 +159,21 @@ public class Getter extends Thread{
 						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1] + "'" + ")";
 
 				finalTimestamp = sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0];
+				System.out.println(finalTimestamp);
 				System.out.println(inserir);
 				stm.executeUpdate(inserir);
 			}
 		}
 		else
 			System.out.println("Não existem novas medições em ambas as zonas");
-
+		
 		conn.close();
+		
+		if(finalTimestamp != null) {
+			System.out.println("Last date sent: " + finalTimestamp);
+			try (PrintWriter out = new PrintWriter("timestamp.txt")) {
+				out.println(finalTimestamp);
+			}
+		}
 	}
 }
