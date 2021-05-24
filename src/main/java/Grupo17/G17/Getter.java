@@ -54,7 +54,7 @@ public class Getter extends Thread{
 	public synchronized void getStuff() throws SQLException, IOException{
 		FindIterable<Document> myCursor1 = db.getCollection("Zona1").find();
 		FindIterable<Document> myCursor2 = db.getCollection("Zona2").find();
-		
+
 		ArrayList<Document> listaMedicoes = new ArrayList<Document>();
 		ArrayList<Document> listaMedicoes_zona1 = getMedicoes(myCursor1);
 		ArrayList<Document> listaMedicoes_zona2 = getMedicoes(myCursor2);
@@ -63,7 +63,7 @@ public class Getter extends Thread{
 			listaMedicoes.add(doc);
 		for(Document doc : listaMedicoes_zona2) 
 			listaMedicoes.add(doc);
-		
+
 		this.medicoes = listaMedicoes;
 	}
 
@@ -73,7 +73,7 @@ public class Getter extends Thread{
 		Iterator d = myCursor.iterator();
 		String newLastTimestamp = null;
 		boolean semaforo = true;
-		
+
 		while(d.hasNext()) {
 			Document medicao = (Document) d.next();
 			listaAux.add(medicao);
@@ -98,7 +98,7 @@ public class Getter extends Thread{
 		if(newLastTimestamp != null) {
 			this.lastTimestamp = newLastTimestamp;
 		}
-		
+
 		return novasMedicoes;
 	}
 
@@ -141,7 +141,7 @@ public class Getter extends Thread{
 				return true;
 	}
 
-	public synchronized void sendStuff(ArrayList<Document> medicoes) throws SQLException, ParseException, IOException { //falta guardar o lastTimestamp num ficheiro
+	public synchronized void sendStuff(ArrayList<Document> medicoes) throws SQLException, ParseException, IOException {
 		Connection conn = null;
 		Statement stm = null;
 
@@ -158,16 +158,29 @@ public class Getter extends Thread{
 						+ "'" + Double.parseDouble(m.toString().split(", ")[4].split("=")[1].split("}")[0]) + "'" + "," +  "'1'" + "," 
 						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1] + "'" + ")";
 
-				finalTimestamp = sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0];
-				System.out.println(inserir);
-				stm.executeUpdate(inserir);
+				if(finalTimestamp != null) {
+					if(!checkTimestamp(finalTimestamp, sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0])) {
+						finalTimestamp = sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0];
+						System.out.println(inserir);
+						stm.executeUpdate(inserir);
+					}
+					else {
+						System.out.println(inserir);
+						stm.executeUpdate(inserir);
+					}
+				}
+				else {
+					finalTimestamp = sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0];
+					System.out.println(inserir);
+					stm.executeUpdate(inserir);
+				}
 			}
 		}
 		else
 			System.out.println("Não existem novas medições em ambas as zonas");
-		
+
 		conn.close();
-		
+
 		if(finalTimestamp != null) {
 			System.out.println("Last date sent: " + finalTimestamp);
 			try (PrintWriter out = new PrintWriter("timestamp.txt")) {
