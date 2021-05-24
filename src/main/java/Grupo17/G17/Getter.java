@@ -159,7 +159,6 @@ public class Getter extends Thread{
 						+ "'" + m.toString().split(", ")[1].split("=")[1] + "'" + "," + "'" + m.toString().split(", ")[2].split("=")[1] + "'" + ")";
 
 				finalTimestamp = sqlDate + "T" + m.toString().split("=")[4].split("T")[1].split(",")[0];
-				System.out.println(finalTimestamp);
 				System.out.println(inserir);
 				stm.executeUpdate(inserir);
 			}
