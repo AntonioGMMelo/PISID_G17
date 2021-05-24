@@ -38,40 +38,44 @@ public class MongoToMqtt {
 		MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://127.0.0.1:27017"));
 		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
 	    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");
-		
-	    long dataAnterior = 0;
-	    while (true) {
-	    	
-	    	Document doc = localMongoCollection1.find().sort(new Document("_id", -1)).first();
-	    	String rawMsg = doc.toString();
-	    	
-	    	System.out.println(rawMsg);
-	    	
-	    	String[] split = rawMsg.split(",");
-	    	
-	    	String[] helperData1 = split[3].split("=");
-	    
-	    	String data = helperData1[1];
-	    	
-	    	
-	    	
-	    	long dataAtual = Long.parseLong(data.replace("-", "").replace("T", "").replace(":", "").replace("Z", ""));
-	    	
-			if(dataAnterior<dataAtual) {
-	    		byte[] payload = rawMsg.getBytes();
-		    
-	    		MqttMessage msg = new MqttMessage(payload);
-	    		msg.setQos(0);
-	    		msg.setRetained(false);
-	    		mqttClient.publish(cloudTopic,msg);
-	    		
-	    		System.out.println(msg);
-	    	}
-		    
-		    Thread.sleep(1000);
-	    	
-	    }
+		try {
+			long dataAnterior = 0;
+			while (true) {
 
+				Document doc = localMongoCollection1.find().sort(new Document("_id", -1)).first();
+				String rawMsg = doc.toString();
+
+				System.out.println(rawMsg);
+
+				String[] split = rawMsg.split(",");
+
+				String[] helperData1 = split[3].split("=");
+
+				String data = helperData1[1];
+
+
+
+				long dataAtual = Long.parseLong(data.replace("-", "").replace("T", "").replace(":", "").replace("Z", ""));
+
+				if(dataAnterior<dataAtual) {
+					byte[] payload = rawMsg.getBytes();
+
+					MqttMessage msg = new MqttMessage(payload);
+					msg.setQos(0);
+					msg.setRetained(false);
+					mqttClient.publish(cloudTopic,msg);
+
+					System.out.println(msg);
+				}
+
+				Thread.sleep(1000);
+
+			}
+		}catch(Exception e){
+
+			MongoToMqtt.main(new String[] {});
+			
+		}
 		
 	}
 
