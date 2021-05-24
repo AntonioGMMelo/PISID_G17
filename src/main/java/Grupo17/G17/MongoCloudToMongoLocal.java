@@ -16,10 +16,12 @@ public class MongoCloudToMongoLocal {
 
 	private static void connect() {		
 		mongoCloud = MongoClients.create(new ConnectionString("mongodb://aluno:aluno@194.210.86.10:27017/?authSource=admin"));
-		dbCloud = mongoCloud.getDatabase("g17");
+//		dbCloud = mongoCloud.getDatabase("g17");
+		dbCloud = mongoCloud.getDatabase("sid2021");
 
-		dbCloud.getCollection("Zona1");
-		dbCloud.getCollection("Zona2");
+//		dbCloud.getCollection("Zona1");
+//		dbCloud.getCollection("Zona2");
+		dbCloud.getCollection("sensort1");
 
 
 		mongoLocal = MongoClients.create("mongodb://127.0.0.1:27017");
@@ -32,14 +34,19 @@ public class MongoCloudToMongoLocal {
 	}
 
 	private static void transferData() {
-		FindIterable<Document> myCursor1 = dbCloud.getCollection("Zona1").find();
-		FindIterable<Document> myCursor2 = dbCloud.getCollection("Zona2").find();
+//		FindIterable<Document> myCursor1 = dbCloud.getCollection("Zona1").find();
+//		FindIterable<Document> myCursor2 = dbCloud.getCollection("Zona2").find();
 		
-		while(myCursor1.iterator().hasNext())
-			dbLocal.getCollection("Zona1").insertOne(myCursor1.iterator().next());
+		FindIterable<Document> myCursor1 = dbCloud.getCollection("sensort1").find();
 		
-		while(myCursor2.iterator().hasNext())
-			dbLocal.getCollection("Zona2").insertOne(myCursor2.iterator().next());
+		while(myCursor1.iterator().hasNext()){
+			Document d = myCursor1.iterator().next();
+			System.out.println(d.toString());
+			dbLocal.getCollection("Zona1").insertOne(d);
+		}
+		
+//		while(myCursor2.iterator().hasNext())
+//			dbLocal.getCollection("Zona2").insertOne(myCursor2.iterator().next());
 	}
 
 	public static void main(String[] args) {
