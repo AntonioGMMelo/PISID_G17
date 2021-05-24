@@ -1,5 +1,9 @@
 package Grupo17.G17;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.bson.Document;
 
 import com.mongodb.ConnectionString;
@@ -38,11 +42,12 @@ public class MongoCloudToMongoLocal {
 //		FindIterable<Document> myCursor2 = dbCloud.getCollection("Zona2").find();
 		
 		FindIterable<Document> myCursor1 = dbCloud.getCollection("sensort1").find();
+		Iterator iterator = myCursor1.iterator();
 		
-		while(myCursor1.iterator().hasNext()){
-			Document d = myCursor1.iterator().next();
-			System.out.println(d.toString());
-			dbLocal.getCollection("Zona1").insertOne(d);
+		while(iterator.hasNext()) {
+			Document medicao = (Document) iterator.next();
+			System.out.println(medicao);
+			dbLocal.getCollection("Zona1").insertOne(medicao);
 		}
 		
 //		while(myCursor2.iterator().hasNext())
