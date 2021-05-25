@@ -26,7 +26,7 @@ BEGIN
 		VALUES (NomeUtilizador, EmailUtilizador, TipoUtilizador);
 END $$
 
-################################# Remover Utilizdor ########################################
+################################# Remover Utilizador ########################################
 DELIMITER $$
 CREATE PROCEDURE RemoverUtilizador(EmailUtilizador varchar(50))
 
@@ -96,4 +96,29 @@ CREATE PROCEDURE AlterarParametros(minTemp decimal(5,2), maxTemp decimal(5,2), m
 BEGIN
 	
   UPDATE parametroCultura SET MinTemp = minTemp, MaxTemp = maxTemp, MinHumid = minHum, MaxHumid = maxHum, MinLuz = minLuz, MaxLuz = maxLuz WHERE parametroCultura_ID = IDParamCult;
+END $$
+
+
+
+############################SelecionarUtilizador##########################################
+
+DELIMITER $$
+CREATE PROCEDURE SelecionarUtilizador(emailUtilizador varchar(50))
+BEGIN
+	
+  SELECT * FROM utilizador WHERE utilizador.EmailUtilizador=emailUtilizador;
+
+END $$
+
+
+
+
+############################SelecionarParametroCultura###########################
+DELIMITER $$
+CREATE PROCEDURE SelecionarParametroCultura(paramCult_ID int)
+BEGIN
+	
+ 
+  SELECT * FROM parametroCultura where parametroCultura.ParametroCultura_ID = paramCult_ID ;
+
 END $$

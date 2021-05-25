@@ -18,7 +18,7 @@
 		<div id = "container">
 			<?php
 
-			print_r($_GET['ID']);
+			//print_r($_GET['ID']);
 
 			include_once '../Includes/DatabaseConn.php';
 			

@@ -17,6 +17,8 @@ GRANT EXECUTE ON PROCEDURE estufadb.SelecionarUtilizador to administradorAplicac
 CREATE ROLE Investigador;
 
 
+GRANT SELECT ON estufadb.cultura to Investigador;
+GRANT SELECT ON estufadb.parametrocultura to Investigador;
 
 GRANT EXECUTE ON PROCEDURE estufadb.AlterarParametros to Investigador;
 GRANT EXECUTE ON PROCEDURE estufadb.SelecionarCultura to Investigador;
@@ -38,9 +40,6 @@ GRANT SELECT ON estufadb.parametrocultura to tecnicoManutenção;
 GRANT SELECT ON estufadb.utilizador to tecnicoManutenção;
 GRANT SELECT ON estufadb.zona to tecnicoManutenção;
 GRANT SELECT ON estufadb.sensor to tecnicoManutenção;
-
-
-
 
 
 
