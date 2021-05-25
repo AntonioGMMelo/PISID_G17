@@ -66,7 +66,8 @@
 		echo "<hr/>";
 		$paramCult_ID = $cultura['ParametroCultura_ID'];
 
-		$sql = " SELECT * FROM parametroCultura where ParametroCultura_ID = $paramCult_ID ;";
+		//$sql = " SELECT * FROM parametroCultura where ParametroCultura_ID = $paramCult_ID ;";
+		$sql = "CALL SelecionarParametroCultura($paramCult_ID);";
 
 		$result = mysqli_query($conn, $sql);
 

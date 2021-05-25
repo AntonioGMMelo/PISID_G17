@@ -32,7 +32,7 @@
 			$paramCult_ID = $_GET['paramCult_ID'];
 
 			$cultura_ID = $_GET['Cultura_ID'];
-			echo $paramCult_ID;
+			//echo $paramCult_ID;
 
 			$sql = "CALL SelecionarParametroCultura($paramCult_ID);";
 
