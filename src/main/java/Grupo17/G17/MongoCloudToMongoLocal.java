@@ -60,7 +60,7 @@ public class MongoCloudToMongoLocal {
 				dbLocal.getCollection(colecaoLocal).insertOne(medicao);
 			}
 		}catch(Exception e){
-			System.out.println("medicao repetida");
+			System.out.println("Medicao Repetida");
 		}
 
 		//		while(myCursor2.iterator().hasNext())
