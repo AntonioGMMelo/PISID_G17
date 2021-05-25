@@ -18,10 +18,8 @@ import com.mongodb.client.MongoDatabase;
 
 public class MongoToMqtt {
 
-	public static void main(String[] args) throws MqttException, InterruptedException {
-		
-		
-		Baseline.main(args);
+	public static void helper(String db, String colecao) throws MqttException, InterruptedException {
+		Baseline.main(new String[] {});
 		
 		String cloudServer = "tcp://broker.mqtt-dashboard.com:1883";
 		String cloudTopic = "g17";
@@ -36,8 +34,8 @@ public class MongoToMqtt {
 		mqttClient.connect(options);
 		
 		MongoClient localMongoClient = new MongoClient(new MongoClientURI("mongodb://127.0.0.1:27017"));
-		MongoDatabase localMongoDatabase = localMongoClient.getDatabase("EstufaDB");
-	    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection("Zona1");
+		MongoDatabase localMongoDatabase = localMongoClient.getDatabase(db);
+	    MongoCollection<Document> localMongoCollection1 = localMongoDatabase.getCollection(colecao);
 		try {
 			long dataAnterior = 0;
 			while (true) {
@@ -76,6 +74,13 @@ public class MongoToMqtt {
 			MongoToMqtt.main(new String[] {});
 			
 		}
+		
+	}
+	
+	
+	public static void main(String[] args) throws MqttException, InterruptedException {
+		
+		MongoToMqtt.helper("EstufaDB", "Zona1");
 		
 	}
 

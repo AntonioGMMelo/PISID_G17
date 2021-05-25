@@ -22,26 +22,25 @@ public class MongoCloudToMongoLocal {
 	private static MongoClient mongoLocal;
 	private static MongoDatabase dbLocal;
 
-	private static void connect() {		
+	private static void connect(String db, String colecao, String dbLocalNome, String colecaoLocal) {		
 		mongoCloud = MongoClients.create(new ConnectionString("mongodb://aluno:aluno@194.210.86.10:27017/?authSource=admin"));
 		//		dbCloud = mongoCloud.getDatabase("g17");
-		dbCloud = mongoCloud.getDatabase("sid2021");
+		dbCloud = mongoCloud.getDatabase(db);
 
-		//		dbCloud.getCollection("Zona1");
+		//		dbCloud.getCollection("Zona1");	
 		//		dbCloud.getCollection("Zona2");
-		dbCloud.getCollection("sensort1");
+		dbCloud.getCollection(colecao);
 
 
 		mongoLocal = MongoClients.create("mongodb://127.0.0.1:27017");
 
-		dbLocal = mongoLocal.getDatabase("EstufaDB");
+		dbLocal = mongoLocal.getDatabase(dbLocalNome);
 
-		dbLocal.getCollection("Zona1");
-		dbLocal.getCollection("Zona2");
+		dbLocal.getCollection(colecaoLocal); 
 
 	}
 
-	private static void transferData() {
+	private static void transferData(String colecao, String colecaoLocal) {
 		//		FindIterable<Document> myCursor1 = dbCloud.getCollection("Zona1").find();
 		//		FindIterable<Document> myCursor2 = dbCloud.getCollection("Zona2").find();
 
@@ -50,13 +49,13 @@ public class MongoCloudToMongoLocal {
 		String data = formatter.format(date);
 		System.out.println(data);
 		BasicDBObject query = new BasicDBObject("Data", new BasicDBObject("$gt", data));
-		FindIterable<Document> myCursor1 = dbCloud.getCollection("sensort1").find(query);
+		FindIterable<Document> myCursor1 = dbCloud.getCollection(colecao).find(query);
 		Iterator iterator = myCursor1.iterator();
 
 		while(iterator.hasNext()) {
 			Document medicao = (Document) iterator.next();
 			System.out.println(medicao);
-			dbLocal.getCollection("Zona1").insertOne(medicao);
+			dbLocal.getCollection(colecaoLocal).insertOne(medicao);
 		}
 
 		//		while(myCursor2.iterator().hasNext())
@@ -64,8 +63,8 @@ public class MongoCloudToMongoLocal {
 	}
 
 	public static void main(String[] args) {
-		connect();
+		connect("sid2021", "sensort1", "EstufaDB", "Zona1");
 		while(true)
-			transferData();
+			transferData("sensort1", "Zona1");
 	}
 }
