@@ -43,7 +43,7 @@ public class MongoToMqtt {
 				Document doc = localMongoCollection1.find().sort(new Document("_id", -1)).first();
 				String rawMsg = doc.toString();
 
-				System.out.println(rawMsg);
+//				System.out.println(rawMsg);
 
 				String[] split = rawMsg.split(",");
 
@@ -51,11 +51,9 @@ public class MongoToMqtt {
 
 				String data = helperData1[1];
 
-
-
 				long dataAtual = Long.parseLong(data.replace("-", "").replace("T", "").replace(":", "").replace("Z", ""));
 
-				if(dataAnterior<dataAtual) {
+				if(dataAtual > dataAnterior) {
 					byte[] payload = rawMsg.getBytes();
 
 					MqttMessage msg = new MqttMessage(payload);
@@ -64,6 +62,9 @@ public class MongoToMqtt {
 					mqttClient.publish(cloudTopic,msg);
 
 					System.out.println(msg);
+					
+					dataAnterior = dataAtual;
+					
 				}
 
 				Thread.sleep(1000);
