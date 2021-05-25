@@ -52,10 +52,15 @@ public class MongoCloudToMongoLocal {
 		FindIterable<Document> myCursor1 = dbCloud.getCollection(colecao).find(query);
 		Iterator iterator = myCursor1.iterator();
 
-		while(iterator.hasNext()) {
-			Document medicao = (Document) iterator.next();
-			System.out.println(medicao);
-			dbLocal.getCollection(colecaoLocal).insertOne(medicao);
+		try {
+			while(iterator.hasNext()) {
+				Document medicao = (Document) iterator.next();
+				System.out.println(medicao);
+
+				dbLocal.getCollection(colecaoLocal).insertOne(medicao);
+			}
+		}catch(Exception e){
+			System.out.println("medicao repetida");
 		}
 
 		//		while(myCursor2.iterator().hasNext())
